@@ -1,0 +1,103 @@
+package com.fanxuankai.canal.elasticsearch.consumer;
+
+import com.alibaba.fastjson.JSON;
+import com.fanxuankai.canal.core.model.EntryWrapper;
+import com.fanxuankai.canal.core.util.CommonUtils;
+import com.fanxuankai.canal.core.util.DomainConverter;
+import com.fanxuankai.canal.elasticsearch.DocumentFunction;
+import com.fanxuankai.canal.elasticsearch.IndexDefinition;
+import com.fanxuankai.canal.elasticsearch.IndexDefinitionManager;
+import com.fanxuankai.canal.elasticsearch.MasterDocumentFunction;
+import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.query.IndexQuery;
+import org.springframework.data.elasticsearch.core.query.UpdateQuery;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+/**
+ * 新增事件消费者
+ *
+ * @author fanxuankai
+ */
+@Slf4j
+public class InsertConsumer extends AbstractEsConsumer<List<Object>> {
+
+    public InsertConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
+                          IndexDefinitionManager indexDefinitionManager,
+                          ElasticsearchRestTemplate elasticsearchRestTemplate) {
+        super(canalElasticsearchConfiguration, indexDefinitionManager, elasticsearchRestTemplate);
+    }
+
+    @Override
+    public List<Object> apply(EntryWrapper entryWrapper) {
+        return indexDefinitionManager.getIndexDefinitions(entryWrapper.getSchemaName(), entryWrapper.getTableName())
+                .stream()
+                .map(indexDefinition -> queries(entryWrapper, indexDefinition))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void accept(List<Object> queries) {
+        if (CollectionUtils.isEmpty(queries)) {
+            return;
+        }
+        List<IndexQuery> indexQueries = queries.stream()
+                .filter(o -> o instanceof IndexQuery)
+                .map(o -> (IndexQuery) o)
+                .collect(Collectors.toList());
+        if (!indexQueries.isEmpty()) {
+            elasticsearchRestTemplate.bulkIndex(indexQueries);
+        }
+        List<UpdateQuery> updateQueries = queries.stream()
+                .filter(o -> o instanceof UpdateQuery)
+                .map(o -> (UpdateQuery) o)
+                .collect(Collectors.toList());
+        if (!updateQueries.isEmpty()) {
+            try {
+                elasticsearchRestTemplate.bulkUpdate(updateQueries);
+            } catch (Exception e) {
+                log.debug(e.getLocalizedMessage());
+            }
+        }
+    }
+
+    private List<Object> queries(EntryWrapper entryWrapper, IndexDefinition indexDefinition) {
+        DocumentFunction<Object, Object> function = indexDefinition.getDocumentFunction();
+        return entryWrapper.getAllRowDataList()
+                .stream()
+                .map(rowData -> DomainConverter.of(CommonUtils.toJsonString(rowData.getAfterColumnsList()),
+                        indexDefinition.getEntityClass()))
+                .map(t -> {
+                    if (function instanceof MasterDocumentFunction) {
+                        return Collections.singletonList(((MasterDocumentFunction<Object, Object>) function).applyForInsert(t));
+                    }
+                    return Collections.emptyList();
+                })
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .map(o -> {
+                    if (function instanceof MasterDocumentFunction) {
+                        IndexQuery query = new IndexQuery();
+                        query.setObject(o);
+                        return query;
+                    }
+                    UpdateQuery query = new UpdateQuery();
+                    query.setId(getId(o));
+                    query.setClazz(o.getClass());
+                    query.setUpdateRequest(new UpdateRequest()
+                            .doc(JSON.toJSONString(o), XContentType.JSON));
+                    return query;
+                })
+                .collect(Collectors.toList());
+    }
+}

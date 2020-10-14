@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>canal-parent</artifactId>
+        <groupId>com.fanxuankai.canal</groupId>
+        <version>1.1.4-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>canal-boot-starter</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>canal-redis-boot-starter</module>
+        <module>canal-elasticsearch-boot-starter</module>
+        <module>canal-mysql-boot-starter</module>
+        <module>canal-rabbitmq-boot-starter</module>
+        <module>canal-kafka-boot-starter</module>
+        <module>canal-rocketmq-boot-starter</module>
+        <module>canal-xxlmq-boot-starter</module>
+        <module>canal-mqbroker-xxl-boot-starter</module>
+        <module>canal-mqbroker-rabbit-boot-starter</module>
+        <module>canal-mqbroker-rocket-boot-starter</module>
+        <module>canal-mqbroker-kafka-boot-starter</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

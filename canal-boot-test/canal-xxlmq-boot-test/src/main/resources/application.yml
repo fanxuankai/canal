@@ -1,0 +1,10 @@
+canal:
+  configuration:
+    instance: canalMqExample
+    filter: canal_client_example.t_user
+    show-entry-log: true
+    show-event-log: true
+xxl:
+  mq:
+    admin:
+      address: http://localhost:9501/xxl-mq-admin

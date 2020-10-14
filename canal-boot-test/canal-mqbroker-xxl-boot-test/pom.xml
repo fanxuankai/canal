@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>canal-boot-test</artifactId>
+        <groupId>com.fanxuankai.canal</groupId>
+        <version>1.1.4-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>canal-mqbroker-xxl-boot-test</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fanxuankai.canal</groupId>
+            <artifactId>canal-mqbroker-xxl-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fanxuankai.canal</groupId>
+            <artifactId>canal-mq-test-common</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

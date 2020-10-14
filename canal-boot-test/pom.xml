@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>canal-parent</artifactId>
+        <groupId>com.fanxuankai.canal</groupId>
+        <version>1.1.4-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>canal-boot-test</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <modules>
+        <module>canal-redis-boot-test</module>
+        <module>canal-elasticsearch-boot-test</module>
+        <module>canal-mysql-boot-test</module>
+        <module>canal-mq-test-common</module>
+        <module>canal-rabbitmq-boot-test</module>
+        <module>canal-kafka-boot-test</module>
+        <module>canal-rocketmq-boot-test</module>
+        <module>canal-xxlmq-boot-test</module>
+        <module>canal-mqbroker-xxl-boot-test</module>
+        <module>canal-mqbroker-rabbit-boot-test</module>
+        <module>canal-mqbroker-rocket-boot-test</module>
+        <module>canal-mqbroker-kafka-boot-test</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>canal-mq-test-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
