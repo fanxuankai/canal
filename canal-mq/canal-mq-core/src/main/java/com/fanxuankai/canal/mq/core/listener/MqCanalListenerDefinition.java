@@ -37,7 +37,6 @@ public class MqCanalListenerDefinition implements CanalListenerDefinition {
         this.canalListener = canalListener;
         this.group = Optional.of(canalListener.group())
                 .filter(StringUtils::hasText)
-                .map(Topic::custom)
                 .orElse(null);
         this.topic = Optional.of(canalListener.topic())
                 .filter(StringUtils::hasText)
