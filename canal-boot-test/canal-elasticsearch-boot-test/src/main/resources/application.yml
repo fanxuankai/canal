@@ -10,5 +10,7 @@ canal:
     filter: canal_client_example.t_product,canal_client_example.t_product_attribute
     show-event-log: true
     show-entry-log: true
+  elasticsearch-configuration:
+    enabled: true
 elasticsearch:
   host-and-ports: 127.0.0.1:9200

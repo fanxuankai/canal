@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,7 +33,7 @@ public class CanalWorker {
     }
 
     public void start() {
-        if (running || !Objects.equals(canalWorkConfiguration.getCanalConfiguration().getEnabled(), Boolean.TRUE)) {
+        if (running) {
             return;
         }
         this.otter = new FlowOtter(canalWorkConfiguration);

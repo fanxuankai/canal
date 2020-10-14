@@ -14,11 +14,6 @@ import org.springframework.util.StringUtils;
 public class CanalConfiguration {
 
     /**
-     * 是否开启 canal 服务
-     */
-    private Boolean enabled = Boolean.TRUE;
-
-    /**
      * 应用 id, 用于 canal client 抢占式运行、binlog offset 防重, 默认取 instance
      */
     private String id;

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 /**
  * @author fanxuankai
  */
-@ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = Constants.PREFIX + ".mq-configuration", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(CanalMqProperties.class)
 @Import({AnnotationCanalListenerFactory.class, ConsumerHelper.class})
 public class CanalMqAutoConfiguration {

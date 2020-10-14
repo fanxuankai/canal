@@ -11,7 +11,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 /**
  * @author fanxuankai
  */
-@ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = Constants.PREFIX + ".es-configuration", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(CanalEsProperties.class)
 public class CanalEsAutoConfiguration {
 

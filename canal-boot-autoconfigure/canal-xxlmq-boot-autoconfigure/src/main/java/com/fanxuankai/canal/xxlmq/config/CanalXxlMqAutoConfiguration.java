@@ -26,7 +26,7 @@ public class CanalXxlMqAutoConfiguration implements ApplicationContextAware {
     private ConsumerHelper consumerHelper;
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = Constants.PREFIX + ".mq-configuration", name = "enabled", havingValue = "true")
     public CanalXxlMqWorker canalXxlMqWorker(CanalMqProperties canalMqProperties) {
         return CanalXxlMqWorker.newCanalWorker(canalMqProperties.getConfiguration(),
                 canalMqProperties.getMqConfiguration());

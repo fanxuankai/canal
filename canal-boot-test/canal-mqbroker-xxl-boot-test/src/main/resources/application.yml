@@ -10,6 +10,8 @@ canal:
     filter: canal_client_example.t_user
     show-entry-log: true
     show-event-log: true
+  mq-configuration:
+    enabled: true
 xxl:
   mq:
     admin:

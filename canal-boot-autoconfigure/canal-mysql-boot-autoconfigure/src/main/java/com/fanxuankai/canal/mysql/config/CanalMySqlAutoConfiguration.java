@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @author fanxuankai
  */
 @EnableConfigurationProperties(CanalMySqlProperties.class)
-@ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = Constants.PREFIX + ".db-configuration", name = "enabled", havingValue = "true")
 public class CanalMySqlAutoConfiguration {
 
     @Bean

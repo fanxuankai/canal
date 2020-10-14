@@ -15,6 +15,11 @@ import java.util.Optional;
 @Accessors(chain = true)
 public class CanalMqConfiguration {
 
+    /**
+     * 是否开启 canal 服务
+     */
+    private Boolean enabled = Boolean.TRUE;
+
     private Map<String, Map<String, MqConsumerConfig>> consumerConfigMap = Collections.emptyMap();
 
     /**

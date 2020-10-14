@@ -11,6 +11,7 @@ canal:
     show-entry-log: true
     show-event-log: true
   db-configuration:
+    enabled: true
     consumer-config-map:
       canal_client_example:
         t_user:
