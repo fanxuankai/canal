@@ -21,8 +21,7 @@ import java.util.List;
 public class CanalKafkaAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true",
-            matchIfMissing = true)
+    @ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true")
     public CanalKafkaWorker canalKafkaWorker(CanalMqProperties canalMqProperties,
                                              KafkaTemplate<String, String> kafkaTemplate) {
         return CanalKafkaWorker.newCanalWorker(canalMqProperties.getConfiguration(),

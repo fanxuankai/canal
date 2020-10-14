@@ -12,8 +12,7 @@ import javax.annotation.Resource;
 /**
  * @author fanxuankai
  */
-@ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true",
-        matchIfMissing = true)
+@ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(CanalRedisProperties.class)
 public class CanalRedisAutoConfiguration {
 

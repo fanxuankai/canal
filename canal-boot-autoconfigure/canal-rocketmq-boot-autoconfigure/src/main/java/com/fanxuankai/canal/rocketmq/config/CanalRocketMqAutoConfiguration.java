@@ -23,8 +23,7 @@ import org.springframework.context.annotation.Bean;
 public class CanalRocketMqAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true",
-            matchIfMissing = true)
+    @ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true")
     public CanalRocketMqWorker canalRocketMqWorker(CanalMqProperties canalMqProperties,
                                                    RocketMQTemplate rocketMqTemplate) {
         return CanalRocketMqWorker.newCanalWorker(canalMqProperties.getConfiguration(),

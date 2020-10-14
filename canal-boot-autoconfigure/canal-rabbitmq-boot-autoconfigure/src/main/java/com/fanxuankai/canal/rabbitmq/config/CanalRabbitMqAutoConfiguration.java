@@ -20,8 +20,7 @@ import org.springframework.context.annotation.Bean;
 public class CanalRabbitMqAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true",
-            matchIfMissing = true)
+    @ConditionalOnProperty(prefix = Constants.PREFIX + ".configuration", name = "enabled", havingValue = "true")
     public CanalRabbitMqWorker canalRabbitMqWorker(CanalMqProperties canalMqProperties,
                                                    RabbitTemplate rabbitTemplate,
                                                    AmqpAdmin amqpAdmin) {
