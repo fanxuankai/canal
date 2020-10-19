@@ -1,6 +1,6 @@
 package com.fanxuankai.canal.redis;
 
-import com.fanxuankai.boot.commons.util.GenericTypeUtils;
+import com.fanxuankai.canal.core.util.GenericTypeUtils;
 import com.fanxuankai.canal.redis.repository.RedisRepository;
 import com.fanxuankai.canal.redis.repository.SimpleRedisRepository;
 import org.springframework.aop.framework.ProxyFactory;

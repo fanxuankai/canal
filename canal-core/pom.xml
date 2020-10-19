@@ -29,10 +29,6 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fanxuankai.boot</groupId>
-            <artifactId>commons-util</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fanxuankai</groupId>
             <artifactId>commons</artifactId>
         </dependency>

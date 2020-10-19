@@ -5,10 +5,10 @@ spring:
     password: HzB!OPxxE$5CwJIZ
     driver-class-name: com.mysql.cj.jdbc.Driver
 canal:
-  configuration:
-    instance: canalMqExample
-    filter: canal_client_example.t_user
-    show-entry-log: true
-    show-event-log: true
-  mq-configuration:
+  mq:
     enabled: true
+    configuration:
+      instance: canalMqExample
+      filter: canal_client_example.t_user
+      show-entry-log: true
+      show-event-log: true

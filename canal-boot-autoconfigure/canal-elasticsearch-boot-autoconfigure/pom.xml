@@ -24,10 +24,6 @@
         </dependency>
         <dependency>
             <groupId>com.fanxuankai.boot</groupId>
-            <artifactId>elasticsearch-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fanxuankai.boot</groupId>
             <artifactId>commons-util</artifactId>
         </dependency>
     </dependencies>

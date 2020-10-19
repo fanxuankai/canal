@@ -50,23 +50,25 @@ public class CanalWorker {
         CanalConfiguration canalConfiguration = canalWorkConfiguration.getCanalConfiguration();
         String key = RedisKey.withPrefix("canal.serviceCache",
                 canalConfiguration.getId() + Constants.SEPARATOR + "CanalRunning");
-        log.info("[" + canalConfiguration.getId() + "] " + "ping...");
         RedisTemplate<String, Object> redisTemplate = canalWorkConfiguration.getRedisTemplate();
-        if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, true,
-                canalConfiguration.getPreemptive().getTimeout(), TimeUnit.SECONDS))) {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> redisTemplate.delete(key)));
-            log.info("[" + canalConfiguration.getId() + "] " + "pong...");
-            canalWorkConfiguration.getThreadPoolExecutor().execute(() -> {
-                do {
-                    Threads.sleep(canalConfiguration.getPreemptive().getKeep(), TimeUnit.SECONDS);
-                    redisTemplate.opsForValue().setIfPresent(key, true, canalConfiguration.getPreemptive().getTimeout(),
-                            TimeUnit.SECONDS);
-                } while (running);
-            });
-            otter.start();
-        } else {
+        log.info("[" + canalConfiguration.getId() + "] " + "ping...");
+        do {
+            if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, true,
+                    canalConfiguration.getPreemptive().getTimeout(), TimeUnit.SECONDS))) {
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> redisTemplate.delete(key)));
+                log.info("[" + canalConfiguration.getId() + "] " + "pong...");
+                canalWorkConfiguration.getThreadPoolExecutor().execute(() -> {
+                    do {
+                        Threads.sleep(canalConfiguration.getPreemptive().getKeep(), TimeUnit.SECONDS);
+                        redisTemplate.opsForValue().setIfPresent(key, true,
+                                canalConfiguration.getPreemptive().getTimeout(),
+                                TimeUnit.SECONDS);
+                    } while (running);
+                });
+                otter.start();
+                break;
+            }
             Threads.sleep(canalConfiguration.getPreemptive().getPing(), TimeUnit.SECONDS);
-            tryStart();
-        }
+        } while (true);
     }
 }

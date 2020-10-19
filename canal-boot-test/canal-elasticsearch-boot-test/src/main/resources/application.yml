@@ -5,12 +5,12 @@ spring:
     password: HzB!OPxxE$5CwJIZ
     driver-class-name: com.mysql.cj.jdbc.Driver
 canal:
-  configuration:
-    instance: canalEsExample
-    filter: canal_client_example.t_product,canal_client_example.t_product_attribute
-    show-event-log: true
-    show-entry-log: true
-  elasticsearch-configuration:
+  elasticsearch:
     enabled: true
+    configuration:
+      instance: canalEsExample
+      filter: canal_client_example.t_product,canal_client_example.t_product_attribute
+      show-event-log: true
+      show-entry-log: true
 elasticsearch:
   host-and-ports: 127.0.0.1:9200

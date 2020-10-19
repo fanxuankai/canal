@@ -1,6 +1,5 @@
 package com.fanxuankai.canal.rocketmq.config;
 
-import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.mq.config.CanalMqProperties;
 import com.fanxuankai.canal.mq.core.listener.ConsumerHelper;
 import com.fanxuankai.canal.rocketmq.CanalRocketMqWorker;
@@ -23,11 +22,11 @@ import org.springframework.context.annotation.Bean;
 public class CanalRocketMqAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".mq-configuration", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = CanalMqProperties.PREFIX, name = "enabled", havingValue = "true")
     public CanalRocketMqWorker canalRocketMqWorker(CanalMqProperties canalMqProperties,
                                                    RocketMQTemplate rocketMqTemplate) {
-        return CanalRocketMqWorker.newCanalWorker(canalMqProperties.getConfiguration(),
-                canalMqProperties.getMqConfiguration(), rocketMqTemplate);
+        return CanalRocketMqWorker.newCanalWorker(canalMqProperties.getConfiguration(), canalMqProperties,
+                rocketMqTemplate);
     }
 
     @Bean(initMethod = "start")

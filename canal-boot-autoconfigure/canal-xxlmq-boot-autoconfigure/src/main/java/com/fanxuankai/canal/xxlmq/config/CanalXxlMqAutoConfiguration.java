@@ -1,6 +1,5 @@
 package com.fanxuankai.canal.xxlmq.config;
 
-import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.mq.config.CanalMqProperties;
 import com.fanxuankai.canal.mq.core.listener.ConsumerHelper;
 import com.fanxuankai.canal.mq.core.model.ListenerMetadata;
@@ -26,10 +25,9 @@ public class CanalXxlMqAutoConfiguration implements ApplicationContextAware {
     private ConsumerHelper consumerHelper;
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".mq-configuration", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = CanalMqProperties.PREFIX, name = "enabled", havingValue = "true")
     public CanalXxlMqWorker canalXxlMqWorker(CanalMqProperties canalMqProperties) {
-        return CanalXxlMqWorker.newCanalWorker(canalMqProperties.getConfiguration(),
-                canalMqProperties.getMqConfiguration());
+        return CanalXxlMqWorker.newCanalWorker(canalMqProperties.getConfiguration(), canalMqProperties);
     }
 
     @Override

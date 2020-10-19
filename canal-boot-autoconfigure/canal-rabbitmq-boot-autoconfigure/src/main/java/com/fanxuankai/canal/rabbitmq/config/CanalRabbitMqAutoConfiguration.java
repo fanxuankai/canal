@@ -1,6 +1,5 @@
 package com.fanxuankai.canal.rabbitmq.config;
 
-import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.mq.config.CanalMqProperties;
 import com.fanxuankai.canal.mq.core.listener.ConsumerHelper;
 import com.fanxuankai.canal.rabbitmq.CanalRabbitMqWorker;
@@ -20,12 +19,12 @@ import org.springframework.context.annotation.Bean;
 public class CanalRabbitMqAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".mq-configuration", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = CanalMqProperties.PREFIX, name = "enabled", havingValue = "true")
     public CanalRabbitMqWorker canalRabbitMqWorker(CanalMqProperties canalMqProperties,
                                                    RabbitTemplate rabbitTemplate,
                                                    AmqpAdmin amqpAdmin) {
-        return CanalRabbitMqWorker.newCanalWorker(canalMqProperties.getConfiguration(),
-                canalMqProperties.getMqConfiguration(), rabbitTemplate, amqpAdmin);
+        return CanalRabbitMqWorker.newCanalWorker(canalMqProperties.getConfiguration(), canalMqProperties,
+                rabbitTemplate, amqpAdmin);
     }
 
     @Bean

@@ -61,12 +61,12 @@ public class CanalConfiguration {
     /**
      * 打印事件日志
      */
-    private boolean showEventLog;
+    private boolean showEventLog = true;
 
     /**
      * 打印 Entry 日志
      */
-    private boolean showEntryLog;
+    private boolean showEntryLog = true;
 
     /**
      * 打印数据明细日志

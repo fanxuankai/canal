@@ -5,7 +5,6 @@ import com.fanxuankai.boot.mqbroker.consume.EventListenerRegistry;
 import com.fanxuankai.boot.mqbroker.model.Event;
 import com.fanxuankai.boot.mqbroker.model.ListenerMetadata;
 import com.fanxuankai.boot.mqbroker.produce.EventPublisher;
-import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.mq.config.CanalMqProperties;
 import com.fanxuankai.canal.mq.core.listener.ConsumerHelper;
 import com.fanxuankai.canal.mqbroker.CanalMqBrokerWorker;
@@ -27,11 +26,11 @@ public class CanalMqBrokerAutoConfiguration implements ApplicationContextAware {
     private ConsumerHelper consumerHelper;
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".mq-configuration", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = CanalMqProperties.PREFIX, name = "enabled", havingValue = "true")
     public CanalMqBrokerWorker canalMqBrokerWorker(CanalMqProperties canalMqProperties,
                                                    EventPublisher<String> eventPublisher) {
-        return CanalMqBrokerWorker.newCanalWorker(canalMqProperties.getConfiguration(),
-                canalMqProperties.getMqConfiguration(), eventPublisher);
+        return CanalMqBrokerWorker.newCanalWorker(canalMqProperties.getConfiguration(), canalMqProperties,
+                eventPublisher);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.fanxuankai.canal.elasticsearch.config;
 
-import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.elasticsearch.CanalElasticsearchWorker;
 import com.fanxuankai.canal.elasticsearch.IndexDefinitionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,7 +10,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 /**
  * @author fanxuankai
  */
-@ConditionalOnProperty(prefix = Constants.PREFIX + ".es-configuration", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = CanalEsProperties.PREFIX, name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(CanalEsProperties.class)
 public class CanalEsAutoConfiguration {
 
@@ -24,7 +23,7 @@ public class CanalEsAutoConfiguration {
     @Bean
     public CanalElasticsearchWorker canalElasticsearchWorker(CanalEsProperties canalEsProperties,
                                                              ElasticsearchRestTemplate elasticsearchRestTemplate) {
-        return CanalElasticsearchWorker.newCanalWorker(canalEsProperties.getConfiguration(),
-                canalEsProperties.getElasticsearchConfiguration(), indexDefinitionManager, elasticsearchRestTemplate);
+        return CanalElasticsearchWorker.newCanalWorker(canalEsProperties.getConfiguration(), canalEsProperties,
+                indexDefinitionManager, elasticsearchRestTemplate);
     }
 }

@@ -1,6 +1,5 @@
 package com.fanxuankai.canal.kafka.config;
 
-import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.kafka.CanalKafkaWorker;
 import com.fanxuankai.canal.mq.config.CanalMqProperties;
 import com.fanxuankai.canal.mq.core.listener.ConsumerHelper;
@@ -21,11 +20,10 @@ import java.util.List;
 public class CanalKafkaAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = Constants.PREFIX + ".mq-configuration", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = CanalMqProperties.PREFIX, name = "enabled", havingValue = "true")
     public CanalKafkaWorker canalKafkaWorker(CanalMqProperties canalMqProperties,
                                              KafkaTemplate<String, String> kafkaTemplate) {
-        return CanalKafkaWorker.newCanalWorker(canalMqProperties.getConfiguration(),
-                canalMqProperties.getMqConfiguration(), kafkaTemplate);
+        return CanalKafkaWorker.newCanalWorker(canalMqProperties.getConfiguration(), canalMqProperties, kafkaTemplate);
     }
 
     @Bean

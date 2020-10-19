@@ -17,6 +17,10 @@
             <artifactId>canal-elasticsearch-boot-autoconfigure</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fanxuankai.boot</groupId>
+            <artifactId>elasticsearch-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

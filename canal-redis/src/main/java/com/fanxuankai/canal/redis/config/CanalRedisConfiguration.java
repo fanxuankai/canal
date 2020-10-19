@@ -16,11 +16,6 @@ import java.util.Optional;
 @Accessors(chain = true)
 public class CanalRedisConfiguration {
 
-    /**
-     * 是否开启 canal 服务
-     */
-    private Boolean enabled = Boolean.TRUE;
-
     private Map<String, Map<String, RedisConsumerConfig>> consumerConfigMap = Collections.emptyMap();
 
     public String getKey(EntryWrapper entryWrapper) {
