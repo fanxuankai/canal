@@ -17,7 +17,7 @@ import java.util.Collections;
 public class CanalElasticsearchDemo {
     public static void main(String[] args) {
         IndexDefinitionManager indexDefinitionManager =
-                IndexDefinitionManager.from(Collections.singletonList(User.class));
+                IndexDefinitionManager.from(Collections.singleton(User.class));
         CanalWorker canalWorker = CanalElasticsearchWorker.newCanalWorker(new CanalConfiguration()
                         .setInstance("canalEsExample")
                         .setShowEventLog(true)

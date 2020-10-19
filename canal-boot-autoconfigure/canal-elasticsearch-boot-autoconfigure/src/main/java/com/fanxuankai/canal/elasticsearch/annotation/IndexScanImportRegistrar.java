@@ -1,24 +1,19 @@
 package com.fanxuankai.canal.elasticsearch.annotation;
 
-import com.fanxuankai.canal.elasticsearch.AnnotationIndexDefinition;
-import com.fanxuankai.canal.elasticsearch.IndexDefinition;
 import com.fanxuankai.canal.elasticsearch.IndexDefinitionManager;
 import com.fanxuankai.canal.elasticsearch.config.CanalEsAutoConfiguration;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +37,7 @@ public class IndexScanImportRegistrar implements ImportBeanDefinitionRegistrar {
                     .map(ClassUtils::getPackageName)
                     .collect(Collectors.toList()));
             if (!basePackages.isEmpty()) {
-                IndexDefinitionManager indexDefinitionManager = loadFrom(IndexScanner.scan(basePackages));
+                IndexDefinitionManager indexDefinitionManager = IndexDefinitionManager.fromBasePackages(basePackages);
                 registry.registerBeanDefinition(CanalEsAutoConfiguration.class.getName(),
                         BeanDefinitionBuilder
                                 .genericBeanDefinition(CanalEsAutoConfiguration.class)
@@ -50,24 +45,6 @@ public class IndexScanImportRegistrar implements ImportBeanDefinitionRegistrar {
                                 .getBeanDefinition());
             }
         }
-    }
-
-    private IndexDefinitionManager loadFrom(Set<Class<?>> classSet) {
-        IndexDefinitionManager indexDefinitionManager = new IndexDefinitionManager();
-        if (CollectionUtils.isEmpty(classSet)) {
-            return indexDefinitionManager;
-        }
-        for (Class<?> domainClass : classSet) {
-            Indexes indexes = AnnotationUtils.findAnnotation(domainClass, Indexes.class);
-            if (indexes == null) {
-                continue;
-            }
-            for (Index index : indexes.value()) {
-                IndexDefinition definition = new AnnotationIndexDefinition(domainClass, index);
-                indexDefinitionManager.add(definition);
-            }
-        }
-        return indexDefinitionManager;
     }
 
 }

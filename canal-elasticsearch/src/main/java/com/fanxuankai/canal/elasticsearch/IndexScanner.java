@@ -1,5 +1,7 @@
-package com.fanxuankai.canal.elasticsearch.annotation;
+package com.fanxuankai.canal.elasticsearch;
 
+import com.fanxuankai.canal.elasticsearch.annotation.Index;
+import com.fanxuankai.canal.elasticsearch.annotation.Indexes;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;

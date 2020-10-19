@@ -6,7 +6,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author fanxuankai
@@ -16,7 +15,7 @@ public class IndexDefinitionManager {
     private final Map<String, Map<String, List<IndexDefinition>>> bySchemaAndTable
             = new HashMap<>(16);
 
-    public static IndexDefinitionManager from(List<Class<?>> domainClasses) {
+    public static IndexDefinitionManager from(Set<Class<?>> domainClasses) {
         IndexDefinitionManager indexDefinitionManager = new IndexDefinitionManager();
         if (CollectionUtils.isEmpty(domainClasses)) {
             return indexDefinitionManager;
@@ -34,14 +33,8 @@ public class IndexDefinitionManager {
         return indexDefinitionManager;
     }
 
-    public static List<IndexDefinition> getIndexDefinitions(Class<?> domainClass) {
-        Indexes indexes = AnnotationUtils.findAnnotation(domainClass, Indexes.class);
-        if (indexes == null) {
-            return Collections.emptyList();
-        }
-        return Arrays.stream(indexes.value())
-                .map(index -> new SimpleIndexDefinition(domainClass, index))
-                .collect(Collectors.toList());
+    public static IndexDefinitionManager fromBasePackages(List<String> basePackages) {
+        return from(IndexScanner.scan(basePackages));
     }
 
     public void add(IndexDefinition indexDefinition) {
