@@ -20,12 +20,10 @@
         <dependency>
             <groupId>com.fanxuankai.canal</groupId>
             <artifactId>canal-redis</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fanxuankai.canal</groupId>
             <artifactId>canal-mysql</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -34,7 +32,6 @@
         <dependency>
             <groupId>com.fanxuankai.canal</groupId>
             <artifactId>canal-elasticsearch</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.jsonzou</groupId>
@@ -44,22 +41,18 @@
         <dependency>
             <groupId>com.fanxuankai.canal</groupId>
             <artifactId>canal-rabbitmq</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fanxuankai.canal</groupId>
             <artifactId>canal-kafka</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fanxuankai.canal</groupId>
             <artifactId>canal-rocketmq</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fanxuankai.canal</groupId>
             <artifactId>canal-xxlmq</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

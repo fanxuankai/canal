@@ -138,12 +138,17 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>canal-mysql</artifactId>
+                <artifactId>canal-redis</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>canal-elasticsearch</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>canal-mysql</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -158,11 +163,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>canal-redis</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>canal-rocketmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -171,7 +171,6 @@
                 <artifactId>canal-xxlmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
