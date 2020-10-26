@@ -14,6 +14,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StopWatch;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public class DefaultMessageConsumer implements MessageConsumer {
             } else {
                 doHandle(messageWrapper);
             }
-        } catch (Exception e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -96,7 +97,7 @@ public class DefaultMessageConsumer implements MessageConsumer {
         return time;
     }
 
-    private void doHandlePerformance(MessageWrapper messageWrapper) throws Exception {
+    private void doHandlePerformance(MessageWrapper messageWrapper) throws ExecutionException, InterruptedException {
         // 异步处理
         List<Future<EntryWrapperProcess>> futureList = messageWrapper.getEntryWrapperList().stream()
                 .map(entryWrapper -> threadPoolExecutor.submit(() -> {

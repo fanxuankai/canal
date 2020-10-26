@@ -8,8 +8,3 @@ canal:
       enable-logic-delete: true
       logic-delete-field: deleted
     enabled: true
-    consumer-config-map:
-      canal_client_example:
-        t_user:
-          filter:
-            aviatorExpression: phone == '1'
