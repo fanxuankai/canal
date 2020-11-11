@@ -1,6 +1,6 @@
 package com.fanxuankai.canal.rabbitmq;
 
-import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.fanxuankai.canal.core.CanalWorker;
 import com.fanxuankai.canal.core.ConsumerConfigFactory;
 import com.fanxuankai.canal.core.EntryConsumerFactory;
@@ -14,7 +14,6 @@ import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
@@ -28,7 +27,7 @@ public class CanalRabbitMqWorker extends CanalWorker {
     }
 
     public static CanalRabbitMqWorker newCanalWorker(CanalConfiguration canalConfiguration,
-                                                     @Nullable CanalMqConfiguration canalMqConfiguration,
+                                                     CanalMqConfiguration canalMqConfiguration,
                                                      RabbitTemplate rabbitTemplate,
                                                      AmqpAdmin amqpAdmin) {
         ConsumerConfigFactory consumerConfigFactory = new ConsumerConfigFactory();
@@ -40,11 +39,11 @@ public class CanalRabbitMqWorker extends CanalWorker {
         EntryConsumerFactory entryConsumerFactory = new EntryConsumerFactory();
         Exchange exchange = new DirectExchange("canal2Mq.exchange");
         amqpAdmin.declareExchange(exchange);
-        entryConsumerFactory.put(EventType.INSERT, new InsertConsumer(canalMqConfiguration, rabbitTemplate
+        entryConsumerFactory.put(CanalEntry.EventType.INSERT, new InsertConsumer(canalMqConfiguration, rabbitTemplate
                 , amqpAdmin, exchange));
-        entryConsumerFactory.put(EventType.UPDATE, new UpdateConsumer(canalMqConfiguration, rabbitTemplate
+        entryConsumerFactory.put(CanalEntry.EventType.UPDATE, new UpdateConsumer(canalMqConfiguration, rabbitTemplate
                 , amqpAdmin, exchange));
-        entryConsumerFactory.put(EventType.DELETE, new DeleteConsumer(canalMqConfiguration, rabbitTemplate
+        entryConsumerFactory.put(CanalEntry.EventType.DELETE, new DeleteConsumer(canalMqConfiguration, rabbitTemplate
                 , amqpAdmin, exchange));
         return new CanalRabbitMqWorker(new CanalWorkConfiguration()
                 .setCanalConfiguration(canalConfiguration)
