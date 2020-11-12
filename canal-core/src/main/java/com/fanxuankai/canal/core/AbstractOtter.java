@@ -66,13 +66,14 @@ public abstract class AbstractOtter implements Otter {
         }
         LOGGER.info("[" + canalConfiguration.getId() + "] " + "canal running...");
         running = true;
-        CanalConnector canalConnector = canalConnectorHelper.createConnect();
+        canalConnectorHelper.afterPropertiesSet();
         while (running) {
             try {
                 StopWatch sw = new StopWatch();
                 sw.start();
                 // 获取指定数量的数据
-                Message message = canalConnector.getWithoutAck(canalConfiguration.getBatchSize());
+                Message message =
+                        canalConnectorHelper.getCanalConnector().getWithoutAck(canalConfiguration.getBatchSize());
                 sw.stop();
                 message.setEntries(filter(message.getEntries()));
                 long batchId = message.getId();
@@ -85,7 +86,7 @@ public abstract class AbstractOtter implements Otter {
                 }
                 Threads.sleep(canalConfiguration.getIntervalMillis(), TimeUnit.MILLISECONDS);
             } catch (CanalClientException e) {
-                LOGGER.error("[" + canalConfiguration.getId() + "] " + "canal 服务异常", e);
+                LOGGER.error(canalConfiguration.getId(), e);
                 canalConnectorHelper.reconnect();
             } catch (Exception e) {
                 running = false;

@@ -41,8 +41,10 @@ public class CanalMysqlDemo {
 
         CanalConfiguration canalConfiguration = new CanalConfiguration();
         canalConfiguration.setInstance("canalMysqlExample");
+        canalConfiguration.setFilter("canal_client_example.t_user");
         canalConfiguration.setShowEventLog(true);
         canalConfiguration.setShowEntryLog(true);
+        canalConfiguration.setBatchSize(10000);
         CanalDbConfiguration canalDbConfiguration = new CanalDbConfiguration();
         canalDbConfiguration.setConsumerConfigMap(consumerConfigMap);
         CanalWorker canalWorker = CanalMySqlWorker.newCanalWorker(canalConfiguration, canalDbConfiguration,

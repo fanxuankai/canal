@@ -11,8 +11,10 @@ public class CanalRedisDemo {
     public static void main(String[] args) {
         CanalConfiguration canalConfiguration = new CanalConfiguration();
         canalConfiguration.setInstance("canalRedisExample");
+        canalConfiguration.setFilter("canal_client_example.t_user");
         canalConfiguration.setShowEventLog(true);
         canalConfiguration.setShowEntryLog(true);
+        canalConfiguration.setBatchSize(10000);
         CanalRedisWorker.newCanalWorker(canalConfiguration, new CanalRedisConfiguration(),
                 RedisTemplates.newRedisTemplate())
                 .start();

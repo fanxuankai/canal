@@ -30,6 +30,7 @@ public class CanalKafkaDemo {
         canalConfiguration.setFilter("canal_client_example.t_user");
         canalConfiguration.setShowEventLog(true);
         canalConfiguration.setShowEntryLog(true);
+        canalConfiguration.setBatchSize(10000);
         CanalWorker canalWorker = CanalKafkaWorker.newCanalWorker(canalConfiguration, new CanalMqConfiguration(),
                 kafkaTemplate);
         canalWorker.getCanalWorkConfiguration()

@@ -27,6 +27,7 @@ public class CanalRocketMqDemo {
         canalConfiguration.setFilter("canal_client_example.t_user");
         canalConfiguration.setShowEventLog(true);
         canalConfiguration.setShowEntryLog(true);
+        canalConfiguration.setBatchSize(10000);
         CanalWorker canalWorker = CanalRocketMqWorker.newCanalWorker(canalConfiguration,
                 new CanalMqConfiguration(), rocketMqTemplate);
         canalWorker.getCanalWorkConfiguration()

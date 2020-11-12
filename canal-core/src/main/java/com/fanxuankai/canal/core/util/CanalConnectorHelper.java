@@ -6,6 +6,7 @@ import com.alibaba.otter.canal.protocol.exception.CanalClientException;
 import com.fanxuankai.commons.util.concurrent.Threads;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
 import java.net.InetSocketAddress;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author fanxuankai
  */
-public class CanalConnectorHelper {
+public class CanalConnectorHelper implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(CanalConnectorHelper.class);
     private String destination;
     private String filter;
@@ -28,12 +29,17 @@ public class CanalConnectorHelper {
 
     private CanalConnector canalConnector;
 
+    @Override
+    public void afterPropertiesSet() {
+        this.canalConnector = createConnect();
+    }
+
     /**
-     * 连接
+     * 创建连接
      *
      * @return CanalConnector
      */
-    public CanalConnector createConnect() {
+    private CanalConnector createConnect() {
         CanalConnector canalConnector;
         if (StringUtils.hasText(zkServers)) {
             canalConnector = CanalConnectors.newClusterConnector(zkServers,
@@ -43,14 +49,14 @@ public class CanalConnectorHelper {
                     username, password);
         }
         this.canalConnector = canalConnector;
-        subscribe();
+        tryConnect();
         return canalConnector;
     }
 
     /**
      * 链接
      */
-    private void subscribe() {
+    private void tryConnect() {
         // 异常后重试
         while (true) {
             try {
@@ -59,7 +65,7 @@ public class CanalConnectorHelper {
                 canalConnector.rollback();
                 return;
             } catch (CanalClientException e) {
-                LOGGER.error("链接失败", e);
+                LOGGER.error(destination, e);
                 Threads.sleep(2, TimeUnit.SECONDS);
             }
         }
@@ -71,8 +77,7 @@ public class CanalConnectorHelper {
     }
 
     public void reconnect() {
-        disconnect();
-        subscribe();
+        afterPropertiesSet();
     }
 
     public String getDestination() {

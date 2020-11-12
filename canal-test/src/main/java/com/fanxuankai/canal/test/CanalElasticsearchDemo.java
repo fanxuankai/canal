@@ -20,8 +20,10 @@ public class CanalElasticsearchDemo {
                 IndexDefinitionManager.from(Collections.singleton(User.class));
         CanalConfiguration canalConfiguration = new CanalConfiguration();
         canalConfiguration.setInstance("canalEsExample");
+        canalConfiguration.setFilter("canal_client_example.t_user");
         canalConfiguration.setShowEventLog(true);
         canalConfiguration.setShowEntryLog(true);
+        canalConfiguration.setBatchSize(10000);
         CanalWorker canalWorker = CanalElasticsearchWorker.newCanalWorker(canalConfiguration,
                 null, indexDefinitionManager,
                 new ElasticsearchRestTemplate(RestClients.create(ClientConfiguration.localhost()).rest()));
