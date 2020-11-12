@@ -13,7 +13,8 @@ import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
 import com.googlecode.aviator.exception.ExpressionSyntaxErrorException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
@@ -31,9 +32,10 @@ import java.util.stream.Stream;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class FilterSubscriber extends SubmissionPublisher<MessageWrapper>
         implements Flow.Subscriber<MessageWrapper> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilterSubscriber.class);
 
     private final Otter otter;
     private final CanalConfiguration canalConfiguration;
@@ -89,7 +91,8 @@ public class FilterSubscriber extends SubmissionPublisher<MessageWrapper>
             item.getEntryWrapperList().forEach(this::filterEntryRowData);
             sw.stop();
             if (canalConfiguration.isShowEventLog()) {
-                log.info("[" + canalConfiguration.getId() + "] " + "Filter batchId: {} rowDataCount: {} -> {} time: " +
+                LOGGER.info("[" + canalConfiguration.getId() + "] " + "Filter batchId: {} rowDataCount: {} -> {} " +
+                                "time: " +
                                 "{}ms", batchId,
                         item.getRowDataCountBeforeFilter(),
                         item.getRowDataCountAfterFilter(),
@@ -102,14 +105,14 @@ public class FilterSubscriber extends SubmissionPublisher<MessageWrapper>
 
     @Override
     public void onError(Throwable throwable) {
-        log.error("[" + canalConfiguration.getId() + "] " + throwable.getLocalizedMessage(), throwable);
+        LOGGER.error("[" + canalConfiguration.getId() + "] " + throwable.getLocalizedMessage(), throwable);
         this.subscription.cancel();
         this.otter.stop();
     }
 
     @Override
     public void onComplete() {
-        log.info("[" + canalConfiguration.getId() + "] " + "Done");
+        LOGGER.info("[" + canalConfiguration.getId() + "] " + "Done");
     }
 
     private void filterEntryRowData(EntryWrapper entryWrapper) {

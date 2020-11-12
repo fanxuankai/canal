@@ -1,9 +1,6 @@
 package com.fanxuankai.canal.db.core.config;
 
 import com.fanxuankai.canal.core.config.ConsumerConfig;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.Map;
@@ -11,9 +8,6 @@ import java.util.Map;
 /**
  * @author fanxuankai
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
-@Accessors(chain = true)
 public class DbConsumerConfig extends ConsumerConfig {
     /**
      * 表名
@@ -35,4 +29,44 @@ public class DbConsumerConfig extends ConsumerConfig {
      * 目标数据库设默认值
      */
     private Map<String, String> defaultValues;
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public List<String> getIncludeColumns() {
+        return includeColumns;
+    }
+
+    public void setIncludeColumns(List<String> includeColumns) {
+        this.includeColumns = includeColumns;
+    }
+
+    public List<String> getExcludeColumns() {
+        return excludeColumns;
+    }
+
+    public void setExcludeColumns(List<String> excludeColumns) {
+        this.excludeColumns = excludeColumns;
+    }
+
+    public Map<String, String> getColumnMap() {
+        return columnMap;
+    }
+
+    public void setColumnMap(Map<String, String> columnMap) {
+        this.columnMap = columnMap;
+    }
+
+    public Map<String, String> getDefaultValues() {
+        return defaultValues;
+    }
+
+    public void setDefaultValues(Map<String, String> defaultValues) {
+        this.defaultValues = defaultValues;
+    }
 }

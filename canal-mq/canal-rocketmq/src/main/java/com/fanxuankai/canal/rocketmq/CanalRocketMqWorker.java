@@ -37,10 +37,11 @@ public class CanalRocketMqWorker extends CanalWorker {
         entryConsumerFactory.put(EventType.INSERT, new InsertConsumer(canalMqConfiguration, rocketMqTemplate));
         entryConsumerFactory.put(EventType.UPDATE, new UpdateConsumer(canalMqConfiguration, rocketMqTemplate));
         entryConsumerFactory.put(EventType.DELETE, new DeleteConsumer(canalMqConfiguration, rocketMqTemplate));
-        return new CanalRocketMqWorker(new CanalWorkConfiguration()
-                .setCanalConfiguration(canalConfiguration)
-                .setConsumerConfigFactory(consumerConfigFactory)
-                .setEntryConsumerFactory(entryConsumerFactory));
+        CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
+        canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
+        canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
+        canalWorkConfiguration.setEntryConsumerFactory(entryConsumerFactory);
+        return new CanalRocketMqWorker(canalWorkConfiguration);
     }
 
 }

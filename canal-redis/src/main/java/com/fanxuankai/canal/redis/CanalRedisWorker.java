@@ -41,11 +41,12 @@ public class CanalRedisWorker extends CanalWorker {
         entryConsumerFactory.put(CanalEntry.EventType.DELETE, new DeleteConsumer(canalRedisConfiguration,
                 redisTemplate));
         entryConsumerFactory.put(CanalEntry.EventType.ERASE, new EraseConsumer(canalRedisConfiguration, redisTemplate));
-        return new CanalRedisWorker(new CanalWorkConfiguration()
-                .setCanalConfiguration(canalConfiguration)
-                .setConsumerConfigFactory(consumerConfigFactory)
-                .setEntryConsumerFactory(entryConsumerFactory)
-                .setRedisTemplate(redisTemplate));
+        CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
+        canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
+        canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
+        canalWorkConfiguration.setEntryConsumerFactory(entryConsumerFactory);
+        canalWorkConfiguration.setRedisTemplate(redisTemplate);
+        return new CanalRedisWorker(canalWorkConfiguration);
     }
 
 }

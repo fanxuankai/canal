@@ -1,7 +1,6 @@
 package com.fanxuankai.canal.core.model;
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.List;
 /**
  * @author fanxuankai
  */
-@Data
 public class EntryWrapper {
     private final CanalEntry.Entry raw;
     /**
@@ -27,6 +25,26 @@ public class EntryWrapper {
         } catch (Exception e) {
             throw new RuntimeException("error parse " + raw.toString());
         }
+    }
+
+    public CanalEntry.Entry getRaw() {
+        return raw;
+    }
+
+    public List<CanalEntry.RowData> getAllRowDataList() {
+        return allRowDataList;
+    }
+
+    public void setAllRowDataList(List<CanalEntry.RowData> allRowDataList) {
+        this.allRowDataList = allRowDataList;
+    }
+
+    public CanalEntry.EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(CanalEntry.EventType eventType) {
+        this.eventType = eventType;
     }
 
     public String getSchemaName() {

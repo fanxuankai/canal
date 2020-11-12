@@ -1,8 +1,6 @@
 package com.fanxuankai.canal.mq.core.config;
 
 import com.fanxuankai.canal.core.model.EntryWrapper;
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.util.Collections;
 import java.util.Map;
@@ -11,8 +9,6 @@ import java.util.Optional;
 /**
  * @author fanxuankai
  */
-@Data
-@Accessors(chain = true)
 public class CanalMqConfiguration {
 
     private Map<String, Map<String, MqConsumerConfig>> consumerConfigMap = Collections.emptyMap();
@@ -21,6 +17,22 @@ public class CanalMqConfiguration {
      * 全局分组
      */
     private String globalGroup;
+
+    public Map<String, Map<String, MqConsumerConfig>> getConsumerConfigMap() {
+        return consumerConfigMap;
+    }
+
+    public void setConsumerConfigMap(Map<String, Map<String, MqConsumerConfig>> consumerConfigMap) {
+        this.consumerConfigMap = consumerConfigMap;
+    }
+
+    public String getGlobalGroup() {
+        return globalGroup;
+    }
+
+    public void setGlobalGroup(String globalGroup) {
+        this.globalGroup = globalGroup;
+    }
 
     public String getTopic(EntryWrapper entryWrapper) {
         return getConsumerConfig(entryWrapper).map(MqConsumerConfig::getTopic).orElse(null);

@@ -37,10 +37,11 @@ public class CanalKafkaWorker extends CanalWorker {
         entryConsumerFactory.put(EventType.INSERT, new InsertConsumer(canalMqConfiguration, kafkaTemplate));
         entryConsumerFactory.put(EventType.UPDATE, new UpdateConsumer(canalMqConfiguration, kafkaTemplate));
         entryConsumerFactory.put(EventType.DELETE, new DeleteConsumer(canalMqConfiguration, kafkaTemplate));
-        return new CanalKafkaWorker(new CanalWorkConfiguration()
-                .setCanalConfiguration(canalConfiguration)
-                .setConsumerConfigFactory(consumerConfigFactory)
-                .setEntryConsumerFactory(entryConsumerFactory));
+        CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
+        canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
+        canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
+        canalWorkConfiguration.setEntryConsumerFactory(entryConsumerFactory);
+        return new CanalKafkaWorker(canalWorkConfiguration);
     }
 
 }

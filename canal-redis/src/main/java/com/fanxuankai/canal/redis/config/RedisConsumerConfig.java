@@ -1,16 +1,12 @@
 package com.fanxuankai.canal.redis.config;
 
 import com.fanxuankai.canal.core.config.ConsumerConfig;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 /**
  * @author fanxuankai
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
 public class RedisConsumerConfig extends ConsumerConfig {
     /**
      * 默认为 schema.table
@@ -28,4 +24,36 @@ public class RedisConsumerConfig extends ConsumerConfig {
      * hash key 增加 combineKeys 后缀, 作为 hash 的集合名, 以 combineKeys 的值作为 hash 的 field
      */
     private List<List<String>> combineKeys;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public boolean isIdAsHashKey() {
+        return idAsHashKey;
+    }
+
+    public void setIdAsHashKey(boolean idAsHashKey) {
+        this.idAsHashKey = idAsHashKey;
+    }
+
+    public List<String> getUniqueKeys() {
+        return uniqueKeys;
+    }
+
+    public void setUniqueKeys(List<String> uniqueKeys) {
+        this.uniqueKeys = uniqueKeys;
+    }
+
+    public List<List<String>> getCombineKeys() {
+        return combineKeys;
+    }
+
+    public void setCombineKeys(List<List<String>> combineKeys) {
+        this.combineKeys = combineKeys;
+    }
 }

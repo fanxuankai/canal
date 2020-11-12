@@ -1,14 +1,25 @@
 package com.fanxuankai.canal.elasticsearch;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 /**
  * @author fanxuankai
  */
-@Data
-@Accessors(chain = true)
 public class UpdateByQueryParam {
     private IndexDefinition indexDefinition;
     private UpdateByQuery updateByQuery;
+
+    public IndexDefinition getIndexDefinition() {
+        return indexDefinition;
+    }
+
+    public void setIndexDefinition(IndexDefinition indexDefinition) {
+        this.indexDefinition = indexDefinition;
+    }
+
+    public UpdateByQuery getUpdateByQuery() {
+        return updateByQuery;
+    }
+
+    public void setUpdateByQuery(UpdateByQuery updateByQuery) {
+        this.updateByQuery = updateByQuery;
+    }
 }

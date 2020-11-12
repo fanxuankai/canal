@@ -18,10 +18,11 @@ public class CanalElasticsearchDemo {
     public static void main(String[] args) {
         IndexDefinitionManager indexDefinitionManager =
                 IndexDefinitionManager.from(Collections.singleton(User.class));
-        CanalWorker canalWorker = CanalElasticsearchWorker.newCanalWorker(new CanalConfiguration()
-                        .setInstance("canalEsExample")
-                        .setShowEventLog(true)
-                        .setShowEntryLog(true),
+        CanalConfiguration canalConfiguration = new CanalConfiguration();
+        canalConfiguration.setInstance("canalEsExample");
+        canalConfiguration.setShowEventLog(true);
+        canalConfiguration.setShowEntryLog(true);
+        CanalWorker canalWorker = CanalElasticsearchWorker.newCanalWorker(canalConfiguration,
                 null, indexDefinitionManager,
                 new ElasticsearchRestTemplate(RestClients.create(ClientConfiguration.localhost()).rest()));
         canalWorker.getCanalWorkConfiguration()

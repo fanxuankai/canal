@@ -7,12 +7,11 @@ import com.fanxuankai.canal.core.util.CommonUtils;
 import com.fanxuankai.canal.core.util.DomainConverter;
 import com.fanxuankai.canal.elasticsearch.*;
 import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration;
-import lombok.Data;
-import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 
@@ -24,8 +23,8 @@ import java.util.stream.Collectors;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteConsumer.class);
 
     public DeleteConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                           IndexDefinitionManager indexDefinitionManager,
@@ -60,7 +59,7 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                     try {
                         elasticsearchRestTemplate.bulkUpdate(updateQueries);
                     } catch (Exception e) {
-                        log.debug(e.getLocalizedMessage());
+                        LOGGER.debug(e.getLocalizedMessage());
                     }
                 });
         objects.stream().filter(o -> o instanceof DeleteObject)
@@ -83,7 +82,10 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                 .map(t -> {
                     if (function instanceof MasterDocumentFunction) {
                         String id = ((MasterDocumentFunction<Object, Object>) function).applyForDelete(t);
-                        return Collections.singletonList(new DeleteObject().setId(id).setDocClass(indexDefinition.getDocumentClass()));
+                        DeleteObject deleteObject = new DeleteObject();
+                        deleteObject.setId(id);
+                        deleteObject.setDocClass(indexDefinition.getDocumentClass());
+                        return Collections.singletonList(deleteObject);
                     } else if (function instanceof OneToOneDocumentFunction) {
                         return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForDelete(t));
                     } else if (function instanceof ManyToOneDocumentFunction) {
@@ -91,9 +93,10 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                     } else if (function instanceof OneToManyDocumentFunction) {
                         UpdateByQuery updateByQuery =
                                 ((OneToManyDocumentFunction<Object, Object>) function).applyForDelete(t);
-                        return Collections.singletonList(new UpdateByQueryParam()
-                                .setUpdateByQuery(updateByQuery)
-                                .setIndexDefinition(indexDefinition));
+                        UpdateByQueryParam updateByQueryParam = new UpdateByQueryParam();
+                        updateByQueryParam.setUpdateByQuery(updateByQuery);
+                        updateByQueryParam.setIndexDefinition(indexDefinition);
+                        return Collections.singletonList(updateByQueryParam);
                     }
                     return Collections.emptyList();
                 })
@@ -113,10 +116,24 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                 .collect(Collectors.toList());
     }
 
-    @Data
-    @Accessors(chain = true)
     private static final class DeleteObject {
         private Class<?> docClass;
         private String id;
+
+        public Class<?> getDocClass() {
+            return docClass;
+        }
+
+        public void setDocClass(Class<?> docClass) {
+            this.docClass = docClass;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
     }
 }

@@ -4,7 +4,8 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.protocol.exception.CanalClientException;
 import com.fanxuankai.commons.util.concurrent.Threads;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.net.InetSocketAddress;
@@ -15,8 +16,8 @@ import java.util.concurrent.TimeUnit;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class CanalConnectorHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CanalConnectorHelper.class);
     private String destination;
     private String filter;
     private String zkServers;
@@ -41,9 +42,6 @@ public class CanalConnectorHelper {
             canalConnector = CanalConnectors.newSingleConnector(new InetSocketAddress(hostname, port), destination,
                     username, password);
         }
-        if (canalConnector == null) {
-            throw new IllegalArgumentException("请检查 Canal 链接配置");
-        }
         this.canalConnector = canalConnector;
         subscribe();
         return canalConnector;
@@ -61,7 +59,7 @@ public class CanalConnectorHelper {
                 canalConnector.rollback();
                 return;
             } catch (CanalClientException e) {
-                log.error("链接失败", e);
+                LOGGER.error("链接失败", e);
                 Threads.sleep(2, TimeUnit.SECONDS);
             }
         }

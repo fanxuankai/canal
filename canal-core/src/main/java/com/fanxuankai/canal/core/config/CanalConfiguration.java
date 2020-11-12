@@ -1,7 +1,5 @@
 package com.fanxuankai.canal.core.config;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
 import org.springframework.util.StringUtils;
 
 /**
@@ -9,8 +7,6 @@ import org.springframework.util.StringUtils;
  *
  * @author fanxuankai
  */
-@Data
-@Accessors(chain = true)
 public class CanalConfiguration {
 
     /**
@@ -106,15 +102,161 @@ public class CanalConfiguration {
         return StringUtils.hasText(id) ? id : instance;
     }
 
-    @Data
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Cluster getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(Cluster cluster) {
+        this.cluster = cluster;
+    }
+
+    public SingleNode getSingleNode() {
+        return singleNode;
+    }
+
+    public void setSingleNode(SingleNode singleNode) {
+        this.singleNode = singleNode;
+    }
+
+    public String getInstance() {
+        return instance;
+    }
+
+    public void setInstance(String instance) {
+        this.instance = instance;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public long getIntervalMillis() {
+        return intervalMillis;
+    }
+
+    public void setIntervalMillis(long intervalMillis) {
+        this.intervalMillis = intervalMillis;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public boolean isShowEventLog() {
+        return showEventLog;
+    }
+
+    public void setShowEventLog(boolean showEventLog) {
+        this.showEventLog = showEventLog;
+    }
+
+    public boolean isShowEntryLog() {
+        return showEntryLog;
+    }
+
+    public void setShowEntryLog(boolean showEntryLog) {
+        this.showEntryLog = showEntryLog;
+    }
+
+    public boolean isShowRowChange() {
+        return showRowChange;
+    }
+
+    public void setShowRowChange(boolean showRowChange) {
+        this.showRowChange = showRowChange;
+    }
+
+    public boolean isFormatRowChangeLog() {
+        return formatRowChangeLog;
+    }
+
+    public void setFormatRowChangeLog(boolean formatRowChangeLog) {
+        this.formatRowChangeLog = formatRowChangeLog;
+    }
+
+    public int getPerformanceThreshold() {
+        return performanceThreshold;
+    }
+
+    public void setPerformanceThreshold(int performanceThreshold) {
+        this.performanceThreshold = performanceThreshold;
+    }
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
+
+    public String getLogicDeleteField() {
+        return logicDeleteField;
+    }
+
+    public void setLogicDeleteField(String logicDeleteField) {
+        this.logicDeleteField = logicDeleteField;
+    }
+
+    public boolean isEnableLogicDelete() {
+        return enableLogicDelete;
+    }
+
+    public void setEnableLogicDelete(boolean enableLogicDelete) {
+        this.enableLogicDelete = enableLogicDelete;
+    }
+
+    public Preemptive getPreemptive() {
+        return preemptive;
+    }
+
+    public void setPreemptive(Preemptive preemptive) {
+        this.preemptive = preemptive;
+    }
+
     public static class Cluster {
         /**
          * zookeeper host:port
          */
         private String nodes = "localhost:2181,localhost:2182,localhost:2183";
+
+        public String getNodes() {
+            return nodes;
+        }
+
+        public void setNodes(String nodes) {
+            this.nodes = nodes;
+        }
     }
 
-    @Data
     public static class SingleNode {
         /**
          * host
@@ -124,9 +266,24 @@ public class CanalConfiguration {
          * port
          */
         private int port = 11111;
+
+        public String getHostname() {
+            return hostname;
+        }
+
+        public void setHostname(String hostname) {
+            this.hostname = hostname;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
     }
 
-    @Data
     public static class Preemptive {
         /**
          * 心跳超时 s
@@ -140,6 +297,30 @@ public class CanalConfiguration {
          * ping 的频率 s
          */
         private Long ping = 30L;
+
+        public Long getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Long timeout) {
+            this.timeout = timeout;
+        }
+
+        public Long getKeep() {
+            return keep;
+        }
+
+        public void setKeep(Long keep) {
+            this.keep = keep;
+        }
+
+        public Long getPing() {
+            return ping;
+        }
+
+        public void setPing(Long ping) {
+            this.ping = ping;
+        }
     }
 
 }

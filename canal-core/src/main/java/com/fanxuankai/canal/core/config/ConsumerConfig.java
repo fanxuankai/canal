@@ -1,14 +1,12 @@
 package com.fanxuankai.canal.core.config;
 
 import com.fanxuankai.canal.core.model.Filter;
-import lombok.Data;
 
 import java.util.Map;
 
 /**
  * @author fanxuankai
  */
-@Data
 public class ConsumerConfig {
     /**
      * 过滤
@@ -23,4 +21,27 @@ public class ConsumerConfig {
      */
     private Map<String, String> javaTypeMap;
 
+    public Filter getFilter() {
+        return filter;
+    }
+
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
+
+    public String getLogicDeleteField() {
+        return logicDeleteField;
+    }
+
+    public void setLogicDeleteField(String logicDeleteField) {
+        this.logicDeleteField = logicDeleteField;
+    }
+
+    public Map<String, String> getJavaTypeMap() {
+        return javaTypeMap;
+    }
+
+    public void setJavaTypeMap(Map<String, String> javaTypeMap) {
+        this.javaTypeMap = javaTypeMap;
+    }
 }

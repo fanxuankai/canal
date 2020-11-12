@@ -9,11 +9,12 @@ import com.fanxuankai.canal.redis.config.CanalRedisConfiguration;
  */
 public class CanalRedisDemo {
     public static void main(String[] args) {
-        CanalRedisWorker.newCanalWorker(new CanalConfiguration()
-                        .setInstance("canalRedisExample")
-                        .setShowEventLog(true)
-                        .setShowEntryLog(true),
-                new CanalRedisConfiguration(), RedisTemplates.newRedisTemplate())
+        CanalConfiguration canalConfiguration = new CanalConfiguration();
+        canalConfiguration.setInstance("canalRedisExample");
+        canalConfiguration.setShowEventLog(true);
+        canalConfiguration.setShowEntryLog(true);
+        CanalRedisWorker.newCanalWorker(canalConfiguration, new CanalRedisConfiguration(),
+                RedisTemplates.newRedisTemplate())
                 .start();
     }
 }

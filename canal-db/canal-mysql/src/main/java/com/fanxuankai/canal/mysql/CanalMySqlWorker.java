@@ -36,9 +36,11 @@ public class CanalMySqlWorker extends CanalWorker {
         entryConsumerFactory.put(CanalEntry.EventType.INSERT, new InsertConsumer(jdbcTemplate, canalDbConfiguration));
         entryConsumerFactory.put(CanalEntry.EventType.UPDATE, new UpdateConsumer(jdbcTemplate, canalDbConfiguration));
         entryConsumerFactory.put(CanalEntry.EventType.DELETE, new DeleteConsumer(jdbcTemplate, canalDbConfiguration));
-        return new CanalMySqlWorker(new CanalWorkConfiguration()
-                .setCanalConfiguration(canalConfiguration)
-                .setConsumerConfigFactory(consumerConfigFactory)
-                .setEntryConsumerFactory(entryConsumerFactory));
+        CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
+        canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
+        canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
+        canalWorkConfiguration.setEntryConsumerFactory(entryConsumerFactory);
+        return new CanalMySqlWorker(canalWorkConfiguration);
     }
+
 }

@@ -25,10 +25,6 @@
             <artifactId>aviator</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fanxuankai</groupId>
             <artifactId>commons</artifactId>
         </dependency>

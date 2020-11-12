@@ -32,18 +32,20 @@ public class CanalMysqlDemo {
         Map<String, String> userDefaultValues = new HashMap<>(16);
         userDefaultValues.put("deleted", "0");
         userColumnMap.put("version", "version1");
-        consumerConfigValue.put("t_user", new DbConsumerConfig()
-                .setDefaultValues(userDefaultValues)
-                .setExcludeColumns(Collections.singletonList("status"))
-                .setColumnMap(userColumnMap));
+        DbConsumerConfig dbConsumerConfig = new DbConsumerConfig();
+        dbConsumerConfig.setDefaultValues(userDefaultValues);
+        dbConsumerConfig.setExcludeColumns(Collections.singletonList("status"));
+        dbConsumerConfig.setColumnMap(userColumnMap);
+        consumerConfigValue.put("t_user", dbConsumerConfig);
         consumerConfigMap.put("canal_client_example", consumerConfigValue);
 
-        CanalWorker canalWorker = CanalMySqlWorker.newCanalWorker(new CanalConfiguration()
-                        .setInstance("canalMysqlExample")
-                        .setShowEventLog(true)
-                        .setShowEntryLog(true),
-                new CanalDbConfiguration()
-                        .setConsumerConfigMap(consumerConfigMap),
+        CanalConfiguration canalConfiguration = new CanalConfiguration();
+        canalConfiguration.setInstance("canalMysqlExample");
+        canalConfiguration.setShowEventLog(true);
+        canalConfiguration.setShowEntryLog(true);
+        CanalDbConfiguration canalDbConfiguration = new CanalDbConfiguration();
+        canalDbConfiguration.setConsumerConfigMap(consumerConfigMap);
+        CanalWorker canalWorker = CanalMySqlWorker.newCanalWorker(canalConfiguration, canalDbConfiguration,
                 new JdbcTemplate(dataSource));
         canalWorker.getCanalWorkConfiguration()
                 .setRedisTemplate(RedisTemplates.newRedisTemplate());

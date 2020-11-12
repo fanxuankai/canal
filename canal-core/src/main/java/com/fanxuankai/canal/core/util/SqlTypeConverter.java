@@ -4,7 +4,8 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.fanxuankai.canal.core.config.ConsumerConfig;
 import com.fanxuankai.canal.core.constants.Constants;
 import com.mysql.cj.MysqlType;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.util.CollectionUtils;
@@ -18,9 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author fanxuankai
  */
-@Slf4j
 public class SqlTypeConverter {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlTypeConverter.class);
     /**
      * key: schema.table value: {字段名: Java 类型}
      */
@@ -67,7 +67,7 @@ public class SqlTypeConverter {
                         fieldsTypeMap.put(column.getName(), Class.forName(className));
                     }
                 } catch (Exception e) {
-                    log.error("类型转换失败", e);
+                    LOGGER.error("类型转换失败", e);
                 }
             }
             JAVA_TYPE_CACHE.put(key, fieldsTypeMap);
@@ -104,7 +104,7 @@ public class SqlTypeConverter {
                 try {
                     convert = CONVERSION_SERVICE.convert(column.getValue(), fieldType);
                 } catch (ConversionFailedException e) {
-                    log.error(String.format("%s.%s.%s %s -> %s", schema, table, column.getName(), column.getValue(),
+                    LOGGER.error(String.format("%s.%s.%s %s -> %s", schema, table, column.getName(), column.getValue(),
                             fieldType), e);
                 }
             }

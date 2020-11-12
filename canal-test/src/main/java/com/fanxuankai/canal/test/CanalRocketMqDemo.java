@@ -22,11 +22,12 @@ public class CanalRocketMqDemo {
     public static void main(String[] args) {
         RocketMQTemplate rocketMqTemplate = new RocketMQTemplate();
         // todo config RocketMQTemplate
-        CanalWorker canalWorker = CanalRocketMqWorker.newCanalWorker(new CanalConfiguration()
-                        .setInstance("canalMqExample")
-                        .setFilter("canal_client_example.t_user")
-                        .setShowEventLog(true)
-                        .setShowEntryLog(true),
+        CanalConfiguration canalConfiguration = new CanalConfiguration();
+        canalConfiguration.setInstance("canalMqExample");
+        canalConfiguration.setFilter("canal_client_example.t_user");
+        canalConfiguration.setShowEventLog(true);
+        canalConfiguration.setShowEntryLog(true);
+        CanalWorker canalWorker = CanalRocketMqWorker.newCanalWorker(canalConfiguration,
                 new CanalMqConfiguration(), rocketMqTemplate);
         canalWorker.getCanalWorkConfiguration()
                 .setRedisTemplate(RedisTemplates.newRedisTemplate());

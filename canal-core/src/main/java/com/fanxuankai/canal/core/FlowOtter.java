@@ -5,7 +5,8 @@ import com.alibaba.otter.canal.protocol.exception.CanalClientException;
 import com.fanxuankai.canal.core.config.CanalWorkConfiguration;
 import com.fanxuankai.commons.util.concurrent.Flow;
 import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -14,9 +15,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class FlowOtter extends AbstractOtter {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlowOtter.class);
     private final SubmissionPublisher<Message> publisher;
 
     public FlowOtter(CanalWorkConfiguration canalWorkConfiguration) {
@@ -47,7 +47,7 @@ public class FlowOtter extends AbstractOtter {
                 getCanalConnector().ack(message.getId());
             } catch (CanalClientException e) {
                 getCanalConnector().rollback(message.getId());
-                log.error("[" + canalConfiguration.getId() + "] " + "Canal ack failure", e);
+                LOGGER.error("[" + canalConfiguration.getId() + "] " + "Canal ack failure", e);
             }
         } else {
             publisher.submit(message);

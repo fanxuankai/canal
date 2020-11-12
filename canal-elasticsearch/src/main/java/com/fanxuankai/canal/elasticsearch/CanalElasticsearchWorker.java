@@ -44,10 +44,11 @@ public class CanalElasticsearchWorker extends CanalWorker {
                 indexDefinitionManager, elasticsearchRestTemplate));
         entryConsumerFactory.put(EventType.ERASE, new EraseConsumer(canalElasticsearchConfiguration,
                 indexDefinitionManager, elasticsearchRestTemplate));
-        return new CanalElasticsearchWorker(new CanalWorkConfiguration()
-                .setCanalConfiguration(canalConfiguration)
-                .setConsumerConfigFactory(consumerConfigFactory)
-                .setEntryConsumerFactory(entryConsumerFactory));
+        CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
+        canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
+        canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
+        canalWorkConfiguration.setEntryConsumerFactory(entryConsumerFactory);
+        return new CanalElasticsearchWorker(canalWorkConfiguration);
     }
 
 }

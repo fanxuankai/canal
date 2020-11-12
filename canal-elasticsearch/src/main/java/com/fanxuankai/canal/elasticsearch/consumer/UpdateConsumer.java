@@ -6,7 +6,6 @@ import com.fanxuankai.canal.core.util.CommonUtils;
 import com.fanxuankai.canal.core.util.DomainConverter;
 import com.fanxuankai.canal.elasticsearch.*;
 import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -16,6 +15,8 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 
@@ -31,8 +32,8 @@ import java.util.stream.Collectors;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateConsumer.class);
 
     public UpdateConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                           IndexDefinitionManager indexDefinitionManager,
@@ -77,7 +78,7 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
         try {
             client.updateByQuery(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            log.error("update by query 异常", e);
+            LOGGER.error("update by query 异常", e);
         }
     }
 
@@ -103,7 +104,7 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
                 elasticsearchRestTemplate.bulkUpdate(updateQueries);
             }
         } catch (Exception e) {
-            log.debug(e.getLocalizedMessage());
+            LOGGER.debug(e.getLocalizedMessage());
         }
         objects.stream().filter(o -> o instanceof UpdateByQueryParam)
                 .map(o -> (UpdateByQueryParam) o)
@@ -129,7 +130,10 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
                     } else if (function instanceof OneToManyDocumentFunction) {
                         UpdateByQuery updateByQuery =
                                 ((OneToManyDocumentFunction<Object, Object>) function).applyForUpdate(before, after);
-                        return Collections.singletonList(new UpdateByQueryParam().setUpdateByQuery(updateByQuery).setIndexDefinition(indexDefinition));
+                        UpdateByQueryParam updateByQueryParam = new UpdateByQueryParam();
+                        updateByQueryParam.setUpdateByQuery(updateByQuery);
+                        updateByQueryParam.setIndexDefinition(indexDefinition);
+                        return Collections.singletonList(updateByQueryParam);
                     }
                     return Collections.emptyList();
                 })

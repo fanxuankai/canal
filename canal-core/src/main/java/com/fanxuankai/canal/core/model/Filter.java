@@ -1,8 +1,6 @@
 package com.fanxuankai.canal.core.model;
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,8 +12,6 @@ import static com.alibaba.otter.canal.protocol.CanalEntry.EventType.*;
  *
  * @author fanxuankai
  */
-@Data
-@Accessors(chain = true)
 public class Filter {
     /**
      * Aviator 表达式, 表达式必须返回 true or false
@@ -33,4 +29,36 @@ public class Filter {
      * 事件类型过滤, 默认为增、删、改、删表
      */
     private List<CanalEntry.EventType> eventTypes = Arrays.asList(INSERT, UPDATE, DELETE, ERASE);
+
+    public String getAviatorExpression() {
+        return aviatorExpression;
+    }
+
+    public void setAviatorExpression(String aviatorExpression) {
+        this.aviatorExpression = aviatorExpression;
+    }
+
+    public List<String> getUpdatedColumns() {
+        return updatedColumns;
+    }
+
+    public void setUpdatedColumns(List<String> updatedColumns) {
+        this.updatedColumns = updatedColumns;
+    }
+
+    public boolean isAnyUpdated() {
+        return anyUpdated;
+    }
+
+    public void setAnyUpdated(boolean anyUpdated) {
+        this.anyUpdated = anyUpdated;
+    }
+
+    public List<CanalEntry.EventType> getEventTypes() {
+        return eventTypes;
+    }
+
+    public void setEventTypes(List<CanalEntry.EventType> eventTypes) {
+        this.eventTypes = eventTypes;
+    }
 }

@@ -26,12 +26,13 @@ public class CanalRabbitMqDemo {
         CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory("localhost");
         RabbitTemplate rabbitTemplate = new RabbitTemplate(cachingConnectionFactory);
         AmqpAdmin amqpAdmin = new RabbitAdmin(rabbitTemplate);
-        CanalWorker canalWorker = CanalRabbitMqWorker.newCanalWorker(new CanalConfiguration()
-                        .setInstance("canalMqExample")
-                        .setFilter("canal_client_example.t_user")
-                        .setShowEventLog(true)
-                        .setShowEntryLog(true),
-                new CanalMqConfiguration(), rabbitTemplate, amqpAdmin);
+        CanalConfiguration canalConfiguration = new CanalConfiguration();
+        canalConfiguration.setInstance("canalMqExample");
+        canalConfiguration.setFilter("canal_client_example.t_user");
+        canalConfiguration.setShowEventLog(true);
+        canalConfiguration.setShowEntryLog(true);
+        CanalWorker canalWorker = CanalRabbitMqWorker.newCanalWorker(canalConfiguration, new CanalMqConfiguration(),
+                rabbitTemplate, amqpAdmin);
         canalWorker.getCanalWorkConfiguration()
                 .setRedisTemplate(RedisTemplates.newRedisTemplate());
         canalWorker.start();

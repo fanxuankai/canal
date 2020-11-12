@@ -7,7 +7,8 @@ import com.alibaba.otter.canal.protocol.exception.CanalClientException;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.util.CanalConnectorHelper;
 import com.fanxuankai.commons.util.concurrent.Threads;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
 
@@ -25,9 +26,8 @@ import static com.alibaba.otter.canal.protocol.CanalEntry.EventType.*;
  *
  * @author fanxuankai
  */
-@Slf4j
 public abstract class AbstractOtter implements Otter {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOtter.class);
     /**
      * 过滤的事件类型
      */
@@ -64,7 +64,7 @@ public abstract class AbstractOtter implements Otter {
         if (running) {
             return;
         }
-        log.info("[" + canalConfiguration.getId() + "] " + "canal running...");
+        LOGGER.info("[" + canalConfiguration.getId() + "] " + "canal running...");
         running = true;
         CanalConnector canalConnector = canalConnectorHelper.createConnect();
         while (running) {
@@ -78,18 +78,18 @@ public abstract class AbstractOtter implements Otter {
                 long batchId = message.getId();
                 if (batchId != -1) {
                     if (canalConfiguration.isShowEventLog() && !message.getEntries().isEmpty()) {
-                        log.info("[" + canalConfiguration.getId() + "] " + "Get batchId: {} time: {}ms", batchId,
+                        LOGGER.info("[" + canalConfiguration.getId() + "] " + "Get batchId: {} time: {}ms", batchId,
                                 sw.getTotalTimeMillis());
                     }
                     onMessage(message);
                 }
                 Threads.sleep(canalConfiguration.getIntervalMillis(), TimeUnit.MILLISECONDS);
             } catch (CanalClientException e) {
-                log.error("[" + canalConfiguration.getId() + "] " + "canal 服务异常", e);
+                LOGGER.error("[" + canalConfiguration.getId() + "] " + "canal 服务异常", e);
                 canalConnectorHelper.reconnect();
             } catch (Exception e) {
                 running = false;
-                log.info("[" + canalConfiguration.getId() + "] " + "Stop get data", e);
+                LOGGER.info("[" + canalConfiguration.getId() + "] " + "Stop get data", e);
             }
         }
         canalConnectorHelper.disconnect();

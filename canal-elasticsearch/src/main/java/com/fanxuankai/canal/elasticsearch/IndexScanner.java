@@ -2,11 +2,12 @@ package com.fanxuankai.canal.elasticsearch;
 
 import com.fanxuankai.canal.elasticsearch.annotation.Index;
 import com.fanxuankai.canal.elasticsearch.annotation.Indexes;
-import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 
 import java.util.Collections;
@@ -16,8 +17,8 @@ import java.util.Set;
 /**
  * @author fanxuankai
  */
-@Slf4j
 public class IndexScanner {
+    private static final Logger LOGGER = LoggerFactory.getLogger(IndexScanner.class);
 
     public static Set<Class<?>> scan(List<String> basePackages) {
         Reflections r =
@@ -31,11 +32,11 @@ public class IndexScanner {
         try {
             indexesClasses = r.getTypesAnnotatedWith(Indexes.class);
         } catch (Exception e) {
-            log.warn(e.getLocalizedMessage());
+            LOGGER.warn(e.getLocalizedMessage());
         }
         sw.stop();
         String simpleName = Index.class.getSimpleName();
-        log.info("Finished {} scanning in {}ms. Found {} {} interfaces.", simpleName, sw.getTotalTimeMillis(),
+        LOGGER.info("Finished {} scanning in {}ms. Found {} {} interfaces.", simpleName, sw.getTotalTimeMillis(),
                 indexesClasses.size(), simpleName);
         return indexesClasses;
     }

@@ -6,8 +6,8 @@ import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.core.util.RedisKey;
 import com.fanxuankai.commons.util.concurrent.ThreadPoolService;
 import com.fanxuankai.commons.util.concurrent.Threads;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
@@ -17,10 +17,8 @@ import java.util.concurrent.TimeUnit;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class CanalWorker {
-
-    @Getter
+    private static final Logger LOGGER = LoggerFactory.getLogger(CanalWorker.class);
     private final CanalWorkConfiguration canalWorkConfiguration;
     private Otter otter;
     private volatile boolean running;
@@ -30,6 +28,10 @@ public class CanalWorker {
         if (canalWorkConfiguration.getThreadPoolExecutor() == null) {
             canalWorkConfiguration.setThreadPoolExecutor(ThreadPoolService.getInstance());
         }
+    }
+
+    public CanalWorkConfiguration getCanalWorkConfiguration() {
+        return canalWorkConfiguration;
     }
 
     public void start() {
@@ -51,12 +53,12 @@ public class CanalWorker {
         String key = RedisKey.withPrefix("canal.serviceCache",
                 canalConfiguration.getId() + Constants.SEPARATOR + "CanalRunning");
         RedisTemplate<String, Object> redisTemplate = canalWorkConfiguration.getRedisTemplate();
-        log.info("[" + canalConfiguration.getId() + "] " + "ping...");
+        LOGGER.info("[" + canalConfiguration.getId() + "] " + "ping...");
         do {
             if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, true,
                     canalConfiguration.getPreemptive().getTimeout(), TimeUnit.SECONDS))) {
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> redisTemplate.delete(key)));
-                log.info("[" + canalConfiguration.getId() + "] " + "pong...");
+                LOGGER.info("[" + canalConfiguration.getId() + "] " + "pong...");
                 canalWorkConfiguration.getThreadPoolExecutor().execute(() -> {
                     do {
                         Threads.sleep(canalConfiguration.getPreemptive().getKeep(), TimeUnit.SECONDS);

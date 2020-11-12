@@ -19,14 +19,13 @@ import java.util.Collections;
  */
 public class CanalXxlMqDemo {
     public static void main(String[] args) {
-        CanalWorker canalWorker = CanalXxlMqWorker.newCanalWorker(new CanalConfiguration()
-                        .setInstance("canalMqExample")
-                        .setFilter("canal_client_example.t_user")
-                        .setShowEventLog(true)
-                        .setShowEntryLog(true),
-                new CanalMqConfiguration());
-        canalWorker.getCanalWorkConfiguration()
-                .setRedisTemplate(RedisTemplates.newRedisTemplate());
+        CanalConfiguration canalConfiguration = new CanalConfiguration();
+        canalConfiguration.setInstance("canalMqExample");
+        canalConfiguration.setFilter("canal_client_example.t_user");
+        canalConfiguration.setShowEventLog(true);
+        canalConfiguration.setShowEntryLog(true);
+        CanalWorker canalWorker = CanalXxlMqWorker.newCanalWorker(canalConfiguration, new CanalMqConfiguration());
+        canalWorker.getCanalWorkConfiguration().setRedisTemplate(RedisTemplates.newRedisTemplate());
         canalWorker.start();
 
         // test consumer

@@ -1,8 +1,6 @@
 package com.fanxuankai.canal.redis.config;
 
 import com.fanxuankai.canal.core.model.EntryWrapper;
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,11 +10,17 @@ import java.util.Optional;
 /**
  * @author fanxuankai
  */
-@Data
-@Accessors(chain = true)
 public class CanalRedisConfiguration {
 
     private Map<String, Map<String, RedisConsumerConfig>> consumerConfigMap = Collections.emptyMap();
+
+    public Map<String, Map<String, RedisConsumerConfig>> getConsumerConfigMap() {
+        return consumerConfigMap;
+    }
+
+    public void setConsumerConfigMap(Map<String, Map<String, RedisConsumerConfig>> consumerConfigMap) {
+        this.consumerConfigMap = consumerConfigMap;
+    }
 
     public String getKey(EntryWrapper entryWrapper) {
         return getConsumerConfig(entryWrapper).map(RedisConsumerConfig::getKey).orElse(null);

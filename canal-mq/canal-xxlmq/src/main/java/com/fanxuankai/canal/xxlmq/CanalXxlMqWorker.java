@@ -35,10 +35,11 @@ public class CanalXxlMqWorker extends CanalWorker {
         entryConsumerFactory.put(EventType.INSERT, new InsertConsumer(canalMqConfiguration));
         entryConsumerFactory.put(EventType.UPDATE, new UpdateConsumer(canalMqConfiguration));
         entryConsumerFactory.put(EventType.DELETE, new DeleteConsumer(canalMqConfiguration));
-        return new CanalXxlMqWorker(new CanalWorkConfiguration()
-                .setCanalConfiguration(canalConfiguration)
-                .setConsumerConfigFactory(consumerConfigFactory)
-                .setEntryConsumerFactory(entryConsumerFactory));
+        CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
+        canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
+        canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
+        canalWorkConfiguration.setEntryConsumerFactory(entryConsumerFactory);
+        return new CanalXxlMqWorker(canalWorkConfiguration);
     }
 
 }

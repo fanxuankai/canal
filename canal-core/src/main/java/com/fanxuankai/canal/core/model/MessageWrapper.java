@@ -1,8 +1,6 @@
 package com.fanxuankai.canal.core.model;
 
 import com.alibaba.otter.canal.protocol.Message;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,16 +10,25 @@ import java.util.stream.Collectors;
  */
 public class MessageWrapper {
     private final Message raw;
-    @Getter
     private final int rowDataCountBeforeFilter;
-    @Getter
-    @Setter
     private List<EntryWrapper> entryWrapperList;
 
     public MessageWrapper(Message raw) {
         this.raw = raw;
         this.entryWrapperList = raw.getEntries().stream().map(EntryWrapper::new).collect(Collectors.toList());
         this.rowDataCountBeforeFilter = getRowDataCountAfterFilter();
+    }
+
+    public int getRowDataCountBeforeFilter() {
+        return rowDataCountBeforeFilter;
+    }
+
+    public List<EntryWrapper> getEntryWrapperList() {
+        return entryWrapperList;
+    }
+
+    public void setEntryWrapperList(List<EntryWrapper> entryWrapperList) {
+        this.entryWrapperList = entryWrapperList;
     }
 
     public long getBatchId() {

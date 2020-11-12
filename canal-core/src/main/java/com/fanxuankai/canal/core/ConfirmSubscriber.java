@@ -3,7 +3,8 @@ package com.fanxuankai.canal.core;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.model.MessageWrapper;
 import com.fanxuankai.commons.util.concurrent.Flow;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 
 /**
@@ -11,9 +12,8 @@ import org.springframework.util.StopWatch;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class ConfirmSubscriber implements Flow.Subscriber<MessageWrapper> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmSubscriber.class);
     private final Otter otter;
     private final CanalConfiguration canalConfiguration;
     private Flow.Subscription subscription;
@@ -36,7 +36,7 @@ public class ConfirmSubscriber implements Flow.Subscriber<MessageWrapper> {
         otter.getCanalConnector().ack(item.getBatchId());
         sw.stop();
         if (canalConfiguration.isShowEventLog() && !item.getEntryWrapperList().isEmpty()) {
-            log.info("[" + canalConfiguration.getId() + "] " + "Confirm batchId: {} time: {}ms", item.getBatchId(),
+            LOGGER.info("[" + canalConfiguration.getId() + "] " + "Confirm batchId: {} time: {}ms", item.getBatchId(),
                     sw.getTotalTimeMillis());
         }
         subscription.request(1);
@@ -44,13 +44,13 @@ public class ConfirmSubscriber implements Flow.Subscriber<MessageWrapper> {
 
     @Override
     public void onError(Throwable throwable) {
-        log.error("[" + canalConfiguration.getId() + "] " + throwable.getLocalizedMessage(), throwable);
+        LOGGER.error("[" + canalConfiguration.getId() + "] " + throwable.getLocalizedMessage(), throwable);
         this.subscription.cancel();
         this.otter.stop();
     }
 
     @Override
     public void onComplete() {
-        log.info("[" + canalConfiguration.getId() + "] " + "Done");
+        LOGGER.info("[" + canalConfiguration.getId() + "] " + "Done");
     }
 }

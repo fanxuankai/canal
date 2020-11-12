@@ -6,8 +6,8 @@ import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.core.model.MessageWrapper;
 import com.fanxuankai.canal.core.util.ConsumeEntryLogger;
 import com.fanxuankai.canal.core.util.RedisKey;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -24,13 +24,12 @@ import java.util.stream.Collectors;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class DefaultMessageConsumer implements MessageConsumer {
-
     /**
      * logfile offset 标记后缀
      */
     protected static final String LOGFILE_OFFSET_SUFFIX = "LogfileOffset";
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMessageConsumer.class);
     private final CanalConfiguration canalConfiguration;
     private final RedisTemplate<String, Object> redisTemplate;
     private final EntryConsumerFactory entryConsumerFactory;
@@ -125,7 +124,7 @@ public class DefaultMessageConsumer implements MessageConsumer {
         String logfileName = entryWrapper.getLogfileName();
         long logfileOffset = entryWrapper.getLogfileOffset();
         if (existsLogfileOffset(logfileName, logfileOffset)) {
-            log.info("防重消费 {} batchId: {}", entryWrapper.toString(), batchId);
+            LOGGER.info("防重消费 {} batchId: {}", entryWrapper.toString(), batchId);
             return true;
         }
         return false;
@@ -133,13 +132,12 @@ public class DefaultMessageConsumer implements MessageConsumer {
 
     private void logEntry(EntryWrapper entryWrapper, long batchId, long time) {
         if (canalConfiguration.isShowEntryLog()) {
-            ConsumeEntryLogger.log(ConsumeEntryLogger.LogInfo
-                    .builder()
-                    .canalConfiguration(canalConfiguration)
-                    .entryWrapper(entryWrapper)
-                    .batchId(batchId)
-                    .time(time)
-                    .build());
+            ConsumeEntryLogger.LogInfo logInfo = new ConsumeEntryLogger.LogInfo();
+            logInfo.setCanalConfiguration(canalConfiguration);
+            logInfo.setEntryWrapper(entryWrapper);
+            logInfo.setBatchId(batchId);
+            logInfo.setTime(time);
+            ConsumeEntryLogger.log(logInfo);
         }
     }
 
@@ -155,11 +153,16 @@ public class DefaultMessageConsumer implements MessageConsumer {
         redisTemplate.opsForHash().put(logFileOffsetTag, logfileName, offset);
     }
 
-    @AllArgsConstructor
     private static class EntryWrapperProcess {
         private final EntryWrapper entryWrapper;
         private final Object process;
         private final EntryConsumer<?> consumer;
+
+        public EntryWrapperProcess(EntryWrapper entryWrapper, Object process, EntryConsumer<?> consumer) {
+            this.entryWrapper = entryWrapper;
+            this.process = process;
+            this.consumer = consumer;
+        }
     }
 
 }

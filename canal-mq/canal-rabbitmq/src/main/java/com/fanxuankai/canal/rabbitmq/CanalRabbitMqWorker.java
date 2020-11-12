@@ -45,10 +45,11 @@ public class CanalRabbitMqWorker extends CanalWorker {
                 , amqpAdmin, exchange));
         entryConsumerFactory.put(CanalEntry.EventType.DELETE, new DeleteConsumer(canalMqConfiguration, rabbitTemplate
                 , amqpAdmin, exchange));
-        return new CanalRabbitMqWorker(new CanalWorkConfiguration()
-                .setCanalConfiguration(canalConfiguration)
-                .setConsumerConfigFactory(consumerConfigFactory)
-                .setEntryConsumerFactory(entryConsumerFactory));
+        CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
+        canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
+        canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
+        canalWorkConfiguration.setEntryConsumerFactory(entryConsumerFactory);
+        return new CanalRabbitMqWorker(canalWorkConfiguration);
     }
 
 }

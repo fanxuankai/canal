@@ -4,9 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.model.EntryWrapper;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,8 +17,8 @@ import static com.alibaba.otter.canal.protocol.CanalEntry.EventType.*;
 /**
  * @author fanxuankai
  */
-@Slf4j
 public class ConsumeEntryLogger {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsumeEntryLogger.class);
 
     public static void log(LogInfo logInfo) {
         EntryWrapper entryWrapper = logInfo.entryWrapper;
@@ -29,11 +28,11 @@ public class ConsumeEntryLogger {
             List<List<LogColumn>> list = entryWrapper.getAllRowDataList().stream()
                     .map(o -> logColumns(o, entryWrapper.getEventType()))
                     .collect(Collectors.toList());
-            log.info("{}{}\n{}", "[" + canalConfiguration.getId() + "] ", logRowChange.toString(),
+            LOGGER.info("{}{}\n{}", "[" + canalConfiguration.getId() + "] ", logRowChange.toString(),
                     JSON.toJSONString(list,
                             canalConfiguration.isFormatRowChangeLog()));
         } else {
-            log.info("{}{}", "[" + canalConfiguration.getId() + "] ", logRowChange.toString());
+            LOGGER.info("{}{}", "[" + canalConfiguration.getId() + "] ", logRowChange.toString());
         }
     }
 
@@ -59,21 +58,79 @@ public class ConsumeEntryLogger {
         return Collections.emptyList();
     }
 
-    @Builder
-    @Getter
     public static class LogInfo {
-        private final CanalConfiguration canalConfiguration;
-        private final EntryWrapper entryWrapper;
-        private final long batchId;
-        private final long time;
+        private CanalConfiguration canalConfiguration;
+        private EntryWrapper entryWrapper;
+        private long batchId;
+        private long time;
+
+        public CanalConfiguration getCanalConfiguration() {
+            return canalConfiguration;
+        }
+
+        public void setCanalConfiguration(CanalConfiguration canalConfiguration) {
+            this.canalConfiguration = canalConfiguration;
+        }
+
+        public EntryWrapper getEntryWrapper() {
+            return entryWrapper;
+        }
+
+        public void setEntryWrapper(EntryWrapper entryWrapper) {
+            this.entryWrapper = entryWrapper;
+        }
+
+        public long getBatchId() {
+            return batchId;
+        }
+
+        public void setBatchId(long batchId) {
+            this.batchId = batchId;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public void setTime(long time) {
+            this.time = time;
+        }
     }
 
-    @Builder
-    @Getter
     private static class LogRowChange {
-        private final long batchId;
-        private final long time;
-        private final EntryWrapper entryWrapper;
+        private long batchId;
+        private long time;
+        private EntryWrapper entryWrapper;
+
+        public LogRowChange(long batchId, long time, EntryWrapper entryWrapper) {
+            this.batchId = batchId;
+            this.time = time;
+            this.entryWrapper = entryWrapper;
+        }
+
+        public long getBatchId() {
+            return batchId;
+        }
+
+        public void setBatchId(long batchId) {
+            this.batchId = batchId;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public void setTime(long time) {
+            this.time = time;
+        }
+
+        public EntryWrapper getEntryWrapper() {
+            return entryWrapper;
+        }
+
+        public void setEntryWrapper(EntryWrapper entryWrapper) {
+            this.entryWrapper = entryWrapper;
+        }
 
         @Override
         public String toString() {
@@ -81,12 +138,49 @@ public class ConsumeEntryLogger {
         }
     }
 
-    @Builder
-    @Getter
     private static class LogColumn {
-        private final String name;
-        private final String oldValue;
-        private final String value;
-        private final boolean updated;
+        private String name;
+        private String oldValue;
+        private String value;
+        private boolean updated;
+
+        public LogColumn(String name, String oldValue, String value, boolean updated) {
+            this.name = name;
+            this.oldValue = oldValue;
+            this.value = value;
+            this.updated = updated;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getOldValue() {
+            return oldValue;
+        }
+
+        public void setOldValue(String oldValue) {
+            this.oldValue = oldValue;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public boolean isUpdated() {
+            return updated;
+        }
+
+        public void setUpdated(boolean updated) {
+            this.updated = updated;
+        }
     }
 }

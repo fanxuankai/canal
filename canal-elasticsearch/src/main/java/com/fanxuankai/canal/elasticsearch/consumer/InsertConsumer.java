@@ -9,10 +9,11 @@ import com.fanxuankai.canal.elasticsearch.IndexDefinition;
 import com.fanxuankai.canal.elasticsearch.IndexDefinitionManager;
 import com.fanxuankai.canal.elasticsearch.MasterDocumentFunction;
 import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
@@ -28,8 +29,8 @@ import java.util.stream.Collectors;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class InsertConsumer extends AbstractEsConsumer<List<Object>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InsertConsumer.class);
 
     public InsertConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                           IndexDefinitionManager indexDefinitionManager,
@@ -66,7 +67,7 @@ public class InsertConsumer extends AbstractEsConsumer<List<Object>> {
             try {
                 elasticsearchRestTemplate.bulkUpdate(updateQueries);
             } catch (Exception e) {
-                log.debug(e.getLocalizedMessage());
+                LOGGER.debug(e.getLocalizedMessage());
             }
         }
     }

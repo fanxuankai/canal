@@ -5,27 +5,29 @@ import com.fanxuankai.canal.mq.core.annotation.Delete;
 import com.fanxuankai.canal.mq.core.annotation.Insert;
 import com.fanxuankai.canal.mq.core.annotation.Update;
 import com.fanxuankai.canal.test.domain.User;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author fanxuankai
  */
-@Slf4j
 @CanalListener(entityClass = User.class, waitRateSeconds = 1, waitMaxSeconds = 1)
 public class UserCanalListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserCanalListener.class);
+
     @Update
     public void update(User before, User after) {
-        log.info("update {}", before.getId());
+        LOGGER.info("update {}", before.getId());
     }
 
     @Insert
     public void insert(User user) {
-        log.info("insert {}", user.getId());
+        LOGGER.info("insert {}", user.getId());
     }
 
     @Delete
     public void delete(User user) {
-        log.info("delete {}", user.getId());
+        LOGGER.info("delete {}", user.getId());
     }
 }

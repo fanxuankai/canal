@@ -2,8 +2,6 @@ package com.fanxuankai.canal.elasticsearch.config;
 
 import com.fanxuankai.canal.core.config.ConsumerConfig;
 import com.fanxuankai.canal.core.model.EntryWrapper;
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.util.Collections;
 import java.util.Map;
@@ -12,11 +10,17 @@ import java.util.Optional;
 /**
  * @author fanxuankai
  */
-@Data
-@Accessors(chain = true)
 public class CanalElasticsearchConfiguration {
 
     private Map<String, Map<String, ConsumerConfig>> consumerConfigMap = Collections.emptyMap();
+
+    public Map<String, Map<String, ConsumerConfig>> getConsumerConfigMap() {
+        return consumerConfigMap;
+    }
+
+    public void setConsumerConfigMap(Map<String, Map<String, ConsumerConfig>> consumerConfigMap) {
+        this.consumerConfigMap = consumerConfigMap;
+    }
 
     public Optional<ConsumerConfig> getConsumerConfig(EntryWrapper entryWrapper) {
         return Optional.ofNullable(consumerConfigMap)

@@ -2,15 +2,15 @@ package com.fanxuankai.canal.elasticsearch;
 
 import com.fanxuankai.canal.core.util.ApplicationContextHolder;
 import com.fanxuankai.canal.elasticsearch.annotation.Index;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
  * @author fanxuankai
  */
-@Slf4j
 public class SimpleIndexDefinition extends AbstractIndexDefinition {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleIndexDefinition.class);
     private DocumentFunction<Object, Object> documentFunction;
 
     public SimpleIndexDefinition(Class<?> domainClass, Index index) {
@@ -37,7 +37,7 @@ public class SimpleIndexDefinition extends AbstractIndexDefinition {
             try {
                 documentFunction = applicationContext.getBean(index.documentFunctionClass());
             } catch (Exception e) {
-                log.debug("从 ApplicationContext 获取失败", e);
+                LOGGER.debug("从 ApplicationContext 获取失败", e);
                 try {
                     documentFunction = index.documentFunctionClass().getDeclaredConstructor().newInstance();
                 } catch (Exception e1) {

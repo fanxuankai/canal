@@ -9,7 +9,8 @@ import com.fanxuankai.canal.core.model.MessageWrapper;
 import com.fanxuankai.canal.core.util.Conversions;
 import com.fanxuankai.commons.util.concurrent.Flow;
 import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
 
@@ -24,10 +25,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  * @author fanxuankai
  */
-@Slf4j
 public class ConvertProcessor extends SubmissionPublisher<MessageWrapper>
         implements Flow.Processor<Message, MessageWrapper> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConvertProcessor.class);
     private final Otter otter;
     private final CanalConfiguration canalConfiguration;
     private final ConsumerConfigFactory consumerConfigFactory;
@@ -59,7 +60,7 @@ public class ConvertProcessor extends SubmissionPublisher<MessageWrapper>
         logicDeleteConvert(wrapper);
         sw.stop();
         if (canalConfiguration.isShowEventLog() && !item.getEntries().isEmpty()) {
-            log.info("[" + canalConfiguration.getId() + "] " + "Convert batchId: {} time: {}ms", item.getId(),
+            LOGGER.info("[" + canalConfiguration.getId() + "] " + "Convert batchId: {} time: {}ms", item.getId(),
                     sw.getTotalTimeMillis());
         }
         submit(wrapper);
@@ -68,14 +69,14 @@ public class ConvertProcessor extends SubmissionPublisher<MessageWrapper>
 
     @Override
     public void onError(Throwable throwable) {
-        log.error("[" + canalConfiguration.getId() + "] " + throwable.getLocalizedMessage(), throwable);
+        LOGGER.error("[" + canalConfiguration.getId() + "] " + throwable.getLocalizedMessage(), throwable);
         this.subscription.cancel();
         this.otter.stop();
     }
 
     @Override
     public void onComplete() {
-        log.info("[" + canalConfiguration.getId() + "] " + "Done");
+        LOGGER.info("[" + canalConfiguration.getId() + "] " + "Done");
     }
 
     private void logicDeleteConvert(MessageWrapper wrapper) {
@@ -123,7 +124,7 @@ public class ConvertProcessor extends SubmissionPublisher<MessageWrapper>
                         afterColumnsField.setAccessible(true);
                         afterColumnsField.set(rowData, Collections.unmodifiableList(Collections.emptyList()));
                     } catch (NoSuchFieldException | IllegalAccessException e) {
-                        log.error("反射异常", e);
+                        LOGGER.error("反射异常", e);
                     }
                 });
             }

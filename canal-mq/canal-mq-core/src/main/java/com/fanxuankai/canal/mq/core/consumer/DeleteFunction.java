@@ -24,14 +24,15 @@ public interface DeleteFunction extends MessageFunction, ConsumerConfigSupplier 
         String schemaName = entryWrapper.getSchemaName();
         String tableName = entryWrapper.getTableName();
         ConsumerConfig consumerConfig = getConsumerConfig(entryWrapper);
-        return new MessageInfo()
-                .setGroup(getGroup(entryWrapper))
-                .setTopic(getTopic(entryWrapper))
-                .setMessages(entryWrapper.getAllRowDataList()
-                        .stream()
-                        .map(rowData -> CommonUtils.jsonWithActualType(consumerConfig,
-                                rowData.getBeforeColumnsList(), schemaName,
-                                tableName, false))
-                        .collect(Collectors.toList()));
+        MessageInfo messageInfo = new MessageInfo();
+        messageInfo.setGroup(getGroup(entryWrapper));
+        messageInfo.setTopic(getTopic(entryWrapper));
+        messageInfo.setMessages(entryWrapper.getAllRowDataList()
+                .stream()
+                .map(rowData -> CommonUtils.jsonWithActualType(consumerConfig,
+                        rowData.getBeforeColumnsList(), schemaName,
+                        tableName, false))
+                .collect(Collectors.toList()));
+        return messageInfo;
     }
 }

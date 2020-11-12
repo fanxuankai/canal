@@ -1,8 +1,6 @@
 package com.fanxuankai.canal.db.core.config;
 
 import com.fanxuankai.canal.core.model.EntryWrapper;
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,11 +10,17 @@ import java.util.Optional;
 /**
  * @author fanxuankai
  */
-@Data
-@Accessors(chain = true)
 public class CanalDbConfiguration {
 
     private Map<String, Map<String, DbConsumerConfig>> consumerConfigMap = Collections.emptyMap();
+
+    public Map<String, Map<String, DbConsumerConfig>> getConsumerConfigMap() {
+        return consumerConfigMap;
+    }
+
+    public void setConsumerConfigMap(Map<String, Map<String, DbConsumerConfig>> consumerConfigMap) {
+        this.consumerConfigMap = consumerConfigMap;
+    }
 
     public List<String> getExcludeColumns(EntryWrapper entryWrapper) {
         return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getExcludeColumns).orElse(null);

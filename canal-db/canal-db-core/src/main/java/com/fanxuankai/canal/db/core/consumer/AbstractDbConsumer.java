@@ -4,8 +4,6 @@ import com.fanxuankai.canal.core.EntryConsumer;
 import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.db.core.config.CanalDbConfiguration;
 import com.fanxuankai.commons.util.ThrowableUtils;
-import lombok.Data;
-import lombok.experimental.Accessors;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +13,6 @@ import org.springframework.util.StringUtils;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -73,13 +70,13 @@ public abstract class AbstractDbConsumer implements EntryConsumer<List<String>> 
                 })
                 .map(column -> {
                     String newName = Optional.ofNullable(columnMap.get(column.getName())).orElse(column.getName());
-                    return new ColumnMapInfo()
-                            .setPrimary(column.getIsKey())
-                            .setName(column.getName())
-                            .setNewName(newName)
-                            .setDefaultValue(defaultValues.get(newName));
+                    ColumnMapInfo columnMapInfo = new ColumnMapInfo();
+                    columnMapInfo.setPrimary(column.getIsKey());
+                    columnMapInfo.setName(column.getName());
+                    columnMapInfo.setNewName(newName);
+                    columnMapInfo.setDefaultValue(defaultValues.get(newName));
+                    return columnMapInfo;
                 })
-                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         if (insert) {
             List<String> names = list.stream().map(ColumnMapInfo::getName).collect(Collectors.toList());
@@ -88,14 +85,15 @@ public abstract class AbstractDbConsumer implements EntryConsumer<List<String>> 
                 if (names.contains(newName)) {
                     continue;
                 }
-                list.add(new ColumnMapInfo().setNewName(newName).setDefaultValue(entry.getValue()));
+                ColumnMapInfo columnMapInfo = new ColumnMapInfo();
+                columnMapInfo.setNewName(newName);
+                columnMapInfo.setDefaultValue(entry.getValue());
+                list.add(columnMapInfo);
             }
         }
         return list;
     }
 
-    @Data
-    @Accessors(chain = true)
     protected static class ColumnMapInfo {
         /**
          * 主键
@@ -114,5 +112,37 @@ public abstract class AbstractDbConsumer implements EntryConsumer<List<String>> 
          * 默认值
          */
         private String defaultValue;
+
+        public boolean isPrimary() {
+            return primary;
+        }
+
+        public void setPrimary(boolean primary) {
+            this.primary = primary;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getNewName() {
+            return newName;
+        }
+
+        public void setNewName(String newName) {
+            this.newName = newName;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
     }
 }

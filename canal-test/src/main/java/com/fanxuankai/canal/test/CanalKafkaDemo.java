@@ -25,12 +25,13 @@ public class CanalKafkaDemo {
         ProducerFactory<String, String> producerFactory =
                 new DefaultKafkaProducerFactory<>(Collections.emptyMap());
         KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(producerFactory);
-        CanalWorker canalWorker = CanalKafkaWorker.newCanalWorker(new CanalConfiguration()
-                        .setInstance("canalMqExample")
-                        .setFilter("canal_client_example.t_user")
-                        .setShowEventLog(true)
-                        .setShowEntryLog(true),
-                new CanalMqConfiguration(), kafkaTemplate);
+        CanalConfiguration canalConfiguration = new CanalConfiguration();
+        canalConfiguration.setInstance("canalMqExample");
+        canalConfiguration.setFilter("canal_client_example.t_user");
+        canalConfiguration.setShowEventLog(true);
+        canalConfiguration.setShowEntryLog(true);
+        CanalWorker canalWorker = CanalKafkaWorker.newCanalWorker(canalConfiguration, new CanalMqConfiguration(),
+                kafkaTemplate);
         canalWorker.getCanalWorkConfiguration()
                 .setRedisTemplate(RedisTemplates.newRedisTemplate());
         canalWorker.start();
