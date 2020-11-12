@@ -44,10 +44,6 @@ public class TableAttributes {
             if (tableAnnotation != null) {
                 return AnnotationAttributes.fromMap(AnnotationUtils.getAnnotationAttributes(tableAnnotation));
             }
-        } catch (Exception ignored) {
-
-        }
-        try {
             Class<Annotation> tableNameClass = (Class<Annotation>) Class.forName(MYBATIS_PLUS_TABLE_ANNOTATION_NAME);
             Annotation tableNameAnnotation = AnnotationUtils.findAnnotation(type, tableNameClass);
             if (tableNameAnnotation != null) {
