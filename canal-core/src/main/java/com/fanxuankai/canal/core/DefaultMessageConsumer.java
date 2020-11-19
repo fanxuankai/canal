@@ -1,5 +1,6 @@
 package com.fanxuankai.canal.core;
 
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.core.model.EntryWrapper;
@@ -123,6 +124,11 @@ public class DefaultMessageConsumer implements MessageConsumer {
     private boolean existsLogfileOffset(EntryWrapper entryWrapper, long batchId) {
         String logfileName = entryWrapper.getLogfileName();
         long logfileOffset = entryWrapper.getLogfileOffset();
+        // 开启了逻辑删除时，删除事件不防重消费
+        if (canalConfiguration.isEnableLogicDelete()
+                && entryWrapper.getEventType() == CanalEntry.EventType.DELETE) {
+            return false;
+        }
         if (existsLogfileOffset(logfileName, logfileOffset)) {
             LOGGER.info("防重消费 {} batchId: {}", entryWrapper.toString(), batchId);
             return true;

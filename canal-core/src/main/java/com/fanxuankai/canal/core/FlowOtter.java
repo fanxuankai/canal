@@ -28,7 +28,7 @@ public class FlowOtter extends AbstractOtter {
                 canalWorkConfiguration.getRedisTemplate(), entryConsumerFactory, threadPoolExecutor);
         ConsumerConfigFactory consumerConfigFactory = canalWorkConfiguration.getConsumerConfigFactory();
         ConvertProcessor convertProcessor = new ConvertProcessor(this, canalConfiguration, consumerConfigFactory,
-                entryConsumerFactory, threadPoolExecutor);
+                threadPoolExecutor);
         FilterSubscriber filterSubscriber = new FilterSubscriber(this, canalConfiguration, consumerConfigFactory,
                 entryConsumerFactory, threadPoolExecutor);
         HandleSubscriber handleSubscriber = new HandleSubscriber(this, canalConfiguration, messageConsumer,
