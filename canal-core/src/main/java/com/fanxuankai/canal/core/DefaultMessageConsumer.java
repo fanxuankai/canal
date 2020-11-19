@@ -52,8 +52,7 @@ public class DefaultMessageConsumer implements MessageConsumer {
 
     @Override
     public void accept(MessageWrapper messageWrapper) {
-        List<EntryWrapper> entryWrapperList = messageWrapper.getEntryWrapperList();
-        if (CollectionUtils.isEmpty(entryWrapperList)) {
+        if (CollectionUtils.isEmpty(messageWrapper.getEntryWrapperList())) {
             return;
         }
         try {

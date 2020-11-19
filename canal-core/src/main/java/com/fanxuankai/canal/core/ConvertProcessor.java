@@ -101,7 +101,6 @@ public class ConvertProcessor extends SubmissionPublisher<MessageWrapper>
                                     && Objects.equals(Conversions.getInstance().convert(column.getValue(),
                                     Boolean.class), Boolean.TRUE)))
                     .collect(Collectors.toList());
-            entryWrapper.getAllRowDataList().removeAll(logicDeletedRowDataList);
             if (!logicDeletedRowDataList.isEmpty()) {
                 EntryWrapper logicDeletedEntryWrapper = new EntryWrapper(entryWrapper.getRaw());
                 logicDeletedEntryWrapper.setEventType(CanalEntry.EventType.DELETE);
@@ -120,6 +119,7 @@ public class ConvertProcessor extends SubmissionPublisher<MessageWrapper>
                 });
                 logicDeletedEntryWrapper.setAllRowDataList(logicDeletedRowDataList);
                 logicDeletedEntryWrapperList.add(logicDeletedEntryWrapper);
+                entryWrapper.getAllRowDataList().removeAll(logicDeletedRowDataList);
             }
         }
         wrapper.getEntryWrapperList().removeIf(entryWrapper -> entryWrapper.getAllRowDataList().isEmpty());
