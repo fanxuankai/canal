@@ -28,6 +28,7 @@ public class CanalConnectorHelper implements InitializingBean {
     private Integer port;
 
     private CanalConnector canalConnector;
+    private volatile boolean running = false;
 
     @Override
     public void afterPropertiesSet() {
@@ -49,6 +50,7 @@ public class CanalConnectorHelper implements InitializingBean {
                     username, password);
         }
         this.canalConnector = canalConnector;
+        this.running = true;
         tryConnect();
         return canalConnector;
     }
@@ -58,7 +60,7 @@ public class CanalConnectorHelper implements InitializingBean {
      */
     private void tryConnect() {
         // 异常后重试
-        while (true) {
+        while (running) {
             try {
                 canalConnector.connect();
                 canalConnector.subscribe(filter);
@@ -74,6 +76,11 @@ public class CanalConnectorHelper implements InitializingBean {
     public void disconnect() {
         canalConnector.unsubscribe();
         canalConnector.disconnect();
+    }
+
+    public void stop() {
+        disconnect();
+        running = false;
     }
 
     public void reconnect() {

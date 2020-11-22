@@ -57,6 +57,7 @@ public abstract class AbstractOtter implements Otter {
     @Override
     public void stop() {
         this.running = false;
+        this.canalConnectorHelper.stop();
     }
 
     @Override
@@ -93,7 +94,6 @@ public abstract class AbstractOtter implements Otter {
                 LOGGER.info("[" + canalConfiguration.getId() + "] " + "Stop get data", e);
             }
         }
-        canalConnectorHelper.disconnect();
     }
 
     /**
