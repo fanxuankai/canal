@@ -57,7 +57,6 @@ public abstract class AbstractOtter implements Otter {
     @Override
     public void stop() {
         this.running = false;
-        this.canalConnectorHelper.stop();
     }
 
     @Override

@@ -62,9 +62,8 @@ public class CanalWorker {
                 canalWorkConfiguration.getThreadPoolExecutor().execute(() -> {
                     do {
                         Threads.sleep(canalConfiguration.getPreemptive().getKeep(), TimeUnit.SECONDS);
-                        redisTemplate.opsForValue().setIfPresent(key, true,
-                                canalConfiguration.getPreemptive().getTimeout(),
-                                TimeUnit.SECONDS);
+                        redisTemplate.opsForValue().set(key, true,
+                                canalConfiguration.getPreemptive().getTimeout(), TimeUnit.SECONDS);
                     } while (running);
                 });
                 otter.start();

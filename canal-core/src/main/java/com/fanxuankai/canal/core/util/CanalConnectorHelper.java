@@ -28,7 +28,6 @@ public class CanalConnectorHelper implements InitializingBean {
     private Integer port;
 
     private CanalConnector canalConnector;
-    private volatile boolean running = false;
 
     @Override
     public void afterPropertiesSet() {
@@ -50,7 +49,6 @@ public class CanalConnectorHelper implements InitializingBean {
                     username, password);
         }
         this.canalConnector = canalConnector;
-        this.running = true;
         tryConnect();
         return canalConnector;
     }
@@ -60,13 +58,17 @@ public class CanalConnectorHelper implements InitializingBean {
      */
     private void tryConnect() {
         // 异常后重试
-        while (running) {
+        while (true) {
             try {
                 canalConnector.connect();
                 canalConnector.subscribe(filter);
                 canalConnector.rollback();
                 return;
             } catch (CanalClientException e) {
+                if ("java.nio.channels.ClosedByInterruptException".equals(e.getLocalizedMessage())) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
                 LOGGER.error(destination, e);
                 Threads.sleep(2, TimeUnit.SECONDS);
             }
@@ -74,13 +76,10 @@ public class CanalConnectorHelper implements InitializingBean {
     }
 
     public void disconnect() {
-        canalConnector.unsubscribe();
-        canalConnector.disconnect();
-    }
-
-    public void stop() {
-        disconnect();
-        running = false;
+        if (canalConnector != null) {
+            canalConnector.unsubscribe();
+            canalConnector.disconnect();
+        }
     }
 
     public void reconnect() {
