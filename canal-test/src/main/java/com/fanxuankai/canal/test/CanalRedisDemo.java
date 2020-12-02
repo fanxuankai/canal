@@ -13,8 +13,9 @@ public class CanalRedisDemo {
         canalConfiguration.setInstance("canalRedisExample");
         canalConfiguration.setFilter("canal_client_example.t_user");
         canalConfiguration.setShowEventLog(true);
-        canalConfiguration.setShowEntryLog(true);
+        canalConfiguration.setShowEntryLog(false);
         canalConfiguration.setBatchSize(10000);
+        canalConfiguration.setParallel(true);
         CanalRedisWorker.newCanalWorker(canalConfiguration, new CanalRedisConfiguration(),
                 RedisTemplates.newRedisTemplate())
                 .start();

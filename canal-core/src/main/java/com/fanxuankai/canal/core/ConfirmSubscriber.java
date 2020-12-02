@@ -5,7 +5,6 @@ import com.fanxuankai.canal.core.model.MessageWrapper;
 import com.fanxuankai.commons.util.concurrent.Flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StopWatch;
 
 /**
  * Canal 事务确认订阅者
@@ -31,13 +30,12 @@ public class ConfirmSubscriber implements Flow.Subscriber<MessageWrapper> {
 
     @Override
     public void onNext(MessageWrapper item) {
-        StopWatch sw = new StopWatch();
-        sw.start();
+        long start = System.currentTimeMillis();
         otter.getCanalConnector().ack(item.getBatchId());
-        sw.stop();
+        long t = System.currentTimeMillis() - start;
         if (canalConfiguration.isShowEventLog() && !item.getEntryWrapperList().isEmpty()) {
-            LOGGER.info("[" + canalConfiguration.getId() + "] " + "Confirm batchId: {} time: {}ms", item.getBatchId(),
-                    sw.getTotalTimeMillis());
+            LOGGER.info("[" + canalConfiguration.getId() + "] " + "Confirm batchId: {} time: {}ms", item.getBatchId()
+                    , t);
         }
         subscription.request(1);
     }

@@ -10,7 +10,6 @@ import com.fanxuankai.commons.util.concurrent.Threads;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StopWatch;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,18 +68,16 @@ public abstract class AbstractOtter implements Otter {
         canalConnectorHelper.afterPropertiesSet();
         while (running) {
             try {
-                StopWatch sw = new StopWatch();
-                sw.start();
+                long start = System.currentTimeMillis();
                 // 获取指定数量的数据
                 Message message =
                         canalConnectorHelper.getCanalConnector().getWithoutAck(canalConfiguration.getBatchSize());
-                sw.stop();
+                long t = System.currentTimeMillis() - start;
                 message.setEntries(filter(message.getEntries()));
                 long batchId = message.getId();
                 if (batchId != -1) {
                     if (canalConfiguration.isShowEventLog() && !message.getEntries().isEmpty()) {
-                        LOGGER.info("[" + canalConfiguration.getId() + "] " + "Get batchId: {} time: {}ms", batchId,
-                                sw.getTotalTimeMillis());
+                        LOGGER.info("[" + canalConfiguration.getId() + "] " + "Get batchId: {} time: {}ms", batchId, t);
                     }
                     onMessage(message);
                 }

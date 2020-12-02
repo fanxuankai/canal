@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StopWatch;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -87,13 +86,11 @@ public class DefaultMessageConsumer implements MessageConsumer {
 
     @SuppressWarnings("rawtypes unchecked")
     private long consume(EntryConsumer consumer, Object process, EntryWrapper entryWrapper) {
-        StopWatch sw = new StopWatch();
-        sw.start();
+        long start = System.currentTimeMillis();
         consumer.accept(process);
-        sw.stop();
-        long time = sw.getTotalTimeMillis();
+        long t = System.currentTimeMillis() - start;
         putOffset(entryWrapper.getLogfileName(), entryWrapper.getLogfileOffset());
-        return time;
+        return t;
     }
 
     private void doHandlePerformance(MessageWrapper messageWrapper) throws ExecutionException, InterruptedException {

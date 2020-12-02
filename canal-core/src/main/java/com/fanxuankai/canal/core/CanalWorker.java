@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,7 +39,11 @@ public class CanalWorker {
         if (running) {
             return;
         }
-        this.otter = new FlowOtter(canalWorkConfiguration);
+        if (Objects.equals(canalWorkConfiguration.getCanalConfiguration().getParallel(), Boolean.TRUE)) {
+            this.otter = new FlowOtter(canalWorkConfiguration);
+        } else {
+            this.otter = new SimpleOtter(canalWorkConfiguration);
+        }
         canalWorkConfiguration.getThreadPoolExecutor().execute(this::tryStart);
         this.running = true;
     }

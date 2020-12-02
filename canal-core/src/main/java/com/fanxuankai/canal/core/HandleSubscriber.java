@@ -6,7 +6,6 @@ import com.fanxuankai.commons.util.concurrent.Flow;
 import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StopWatch;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,14 +39,13 @@ public class HandleSubscriber extends SubmissionPublisher<MessageWrapper>
 
     @Override
     public void onNext(MessageWrapper item) {
-        StopWatch sw = new StopWatch();
-        sw.start();
+        long start = System.currentTimeMillis();
         messageConsumer.accept(item);
-        sw.stop();
+        long t = System.currentTimeMillis() - start;
         if (Objects.equals(canalConfiguration.isShowEventLog(), Boolean.TRUE)
                 && !item.getEntryWrapperList().isEmpty()) {
             LOGGER.info("[" + canalConfiguration.getId() + "] " + "Handle batchId: {} time: {}ms", item.getBatchId(),
-                    sw.getTotalTimeMillis());
+                    t);
         }
         submit(item);
         subscription.request(1);

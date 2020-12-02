@@ -93,10 +93,16 @@ public class CanalConfiguration {
      * 激活逻辑删除
      */
     private boolean enableLogicDelete;
+
     /**
      * 抢占式运行参数
      */
     private Preemptive preemptive = new Preemptive();
+
+    /**
+     * 并行处理
+     */
+    private Boolean parallel;
 
     public String getId() {
         return StringUtils.hasText(id) ? id : instance;
@@ -240,6 +246,14 @@ public class CanalConfiguration {
 
     public void setPreemptive(Preemptive preemptive) {
         this.preemptive = preemptive;
+    }
+
+    public Boolean getParallel() {
+        return parallel;
+    }
+
+    public void setParallel(Boolean parallel) {
+        this.parallel = parallel;
     }
 
     public static class Cluster {

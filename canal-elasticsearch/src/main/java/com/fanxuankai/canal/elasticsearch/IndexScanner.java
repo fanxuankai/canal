@@ -8,7 +8,6 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StopWatch;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,18 +25,17 @@ public class IndexScanner {
                         .forPackages(basePackages.toArray(new String[0]))
                         .setScanners(new SubTypesScanner(), new TypeAnnotationsScanner())
                 );
-        StopWatch sw = new StopWatch();
-        sw.start();
+        long start = System.currentTimeMillis();
         Set<Class<?>> indexesClasses = Collections.emptySet();
         try {
             indexesClasses = r.getTypesAnnotatedWith(Indexes.class);
         } catch (Exception e) {
             LOGGER.warn(e.getLocalizedMessage());
         }
-        sw.stop();
+        long t = System.currentTimeMillis() - start;
         String simpleName = Index.class.getSimpleName();
-        LOGGER.info("Finished {} scanning in {}ms. Found {} {} interfaces.", simpleName, sw.getTotalTimeMillis(),
-                indexesClasses.size(), simpleName);
+        LOGGER.info("Finished {} scanning in {}ms. Found {} {} interfaces.", simpleName, t, indexesClasses.size(),
+                simpleName);
         return indexesClasses;
     }
 
