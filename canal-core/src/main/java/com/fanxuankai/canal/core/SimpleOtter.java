@@ -18,15 +18,24 @@ public class SimpleOtter extends AbstractOtter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleOtter.class);
 
     private final CanalWorkConfiguration canalWorkConfiguration;
+    private final MessageConsumer messageConsumer;
 
-    public SimpleOtter(CanalWorkConfiguration canalWorkerConfiguration) {
-        super(canalWorkerConfiguration.getCanalConfiguration());
-        this.canalWorkConfiguration = canalWorkerConfiguration;
+    public SimpleOtter(CanalWorkConfiguration canalWorkConfiguration) {
+        super(canalWorkConfiguration.getCanalConfiguration());
+        this.canalWorkConfiguration = canalWorkConfiguration;
+        this.messageConsumer = new DefaultMessageConsumer(canalConfiguration,
+                canalWorkConfiguration.getRedisTemplate(),
+                canalWorkConfiguration.getEntryConsumerFactory(),
+                canalWorkConfiguration.getThreadPoolExecutor());
     }
 
     @Override
     protected void onMessage(Message message) {
-        if (message.getEntries().isEmpty() || canalConfiguration.isSkip()) {
+        boolean isEntriesEmpty = message.getEntries().isEmpty();
+        boolean showEventLog = canalConfiguration.isShowEventLog();
+        long start, t;
+
+        if (isEntriesEmpty || canalConfiguration.isSkip()) {
             try {
                 getCanalConnector().ack(message.getId());
             } catch (CanalClientException e) {
@@ -35,26 +44,49 @@ public class SimpleOtter extends AbstractOtter {
             }
             return;
         }
-        long start = System.currentTimeMillis();
+
+        // convert
+        start = System.currentTimeMillis();
         MessageWrapper wrapper = new MessageWrapper(message);
-        EntryConsumerFactory entryConsumerFactory = canalWorkConfiguration.getEntryConsumerFactory();
-        ConsumerConfigFactory consumerConfigFactory = canalWorkConfiguration.getConsumerConfigFactory();
+        MessageUtils.logicDeleteConvert(wrapper, canalConfiguration, canalWorkConfiguration.getConsumerConfigFactory());
+        t = System.currentTimeMillis() - start;
+        if (showEventLog) {
+            LOGGER.info("[" + canalConfiguration.getId() + "] " + "Convert batchId: {} time: {}ms",
+                    wrapper.getBatchId(), t);
+        }
+
+        // filter
+        start = System.currentTimeMillis();
         wrapper.getEntryWrapperList().forEach(entryWrapper -> MessageUtils.filterEntryRowData(entryWrapper,
-                entryConsumerFactory, consumerConfigFactory));
-        MessageConsumer messageConsumer = new DefaultMessageConsumer(canalConfiguration,
-                canalWorkConfiguration.getRedisTemplate(), entryConsumerFactory,
-                canalWorkConfiguration.getThreadPoolExecutor());
+                canalWorkConfiguration.getEntryConsumerFactory(), canalWorkConfiguration.getConsumerConfigFactory()));
+        t = System.currentTimeMillis() - start;
+        if (showEventLog) {
+            LOGGER.info("[" + canalConfiguration.getId() + "] " + "Filter batchId: {} rowDataCount: {} -> {} " +
+                            "time: {}ms", wrapper.getBatchId(), wrapper.getRowDataCountBeforeFilter(),
+                    wrapper.getRowDataCountAfterFilter(), t);
+        }
+
+        // handle
+        start = System.currentTimeMillis();
+        messageConsumer.accept(wrapper);
+        t = System.currentTimeMillis() - start;
+        if (showEventLog) {
+            LOGGER.info("[" + canalConfiguration.getId() + "] " + "Handle batchId: {} time: {}ms",
+                    wrapper.getBatchId(), t);
+        }
+
+        // confirm
         try {
-            messageConsumer.accept(wrapper);
+            start = System.currentTimeMillis();
             getCanalConnector().ack(wrapper.getBatchId());
+            t = System.currentTimeMillis() - start;
+            if (showEventLog) {
+                LOGGER.info("[" + canalConfiguration.getId() + "] " + "Confirm batchId: {} time: {}ms",
+                        wrapper.getBatchId(), t);
+            }
         } catch (Exception e) {
             getCanalConnector().rollback(wrapper.getBatchId());
             LOGGER.error("[" + canalConfiguration.getId() + "] " + "Message consume failure", e);
-        }
-        if (canalConfiguration.isShowEventLog() && !wrapper.getEntryWrapperList().isEmpty()) {
-            LOGGER.info("[" + canalConfiguration.getId() + "] " + "Handle batchId: {} time: {}ms",
-                    wrapper.getBatchId(),
-                    System.currentTimeMillis() - start);
         }
     }
 
