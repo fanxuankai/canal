@@ -13,6 +13,10 @@ public class Constants {
      */
     public static final String SEPARATOR1 = ":";
     /**
+     * 分隔符 _
+     */
+    public static final String SEPARATOR2 = "_";
+    /**
      * 前缀
      */
     public static final String PREFIX = "canal";

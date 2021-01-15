@@ -3,6 +3,7 @@ package com.fanxuankai.canal.mq.core.listener;
 import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.core.util.DomainConverter;
 import com.fanxuankai.canal.core.util.Pair;
+import com.fanxuankai.canal.core.util.Topic;
 import com.fanxuankai.canal.mq.core.enums.EventType;
 
 import java.util.Optional;
@@ -26,13 +27,13 @@ public class ConsumerHelper {
                 .forEach(definition -> {
                     Optional.ofNullable(definition.getInsertConsumer())
                             .ifPresent(o -> queueConsumer.accept(definition,
-                                    definition.getTopic() + Constants.SEPARATOR + INSERT));
+                                    Topic.customWithoutPrefix(definition.getTopic(), INSERT.name())));
                     Optional.ofNullable(definition.getUpdateConsumer())
                             .ifPresent(o -> queueConsumer.accept(definition,
-                                    definition.getTopic() + Constants.SEPARATOR + UPDATE));
+                                    Topic.customWithoutPrefix(definition.getTopic(), UPDATE.name())));
                     Optional.ofNullable(definition.getDeleteConsumer())
                             .ifPresent(o -> queueConsumer.accept(definition,
-                                    definition.getTopic() + Constants.SEPARATOR + DELETE));
+                                    Topic.customWithoutPrefix(definition.getTopic(), DELETE.name())));
                 });
     }
 
@@ -41,7 +42,7 @@ public class ConsumerHelper {
     }
 
     public void consume(String group, String topic, String msg) {
-        int i = topic.lastIndexOf(Constants.SEPARATOR);
+        int i = topic.lastIndexOf(Constants.SEPARATOR2);
         String rawTopic = topic.substring(0, i);
         EventType eventType = valueOf(topic.substring(i + 1));
         CanalListenerDefinition definition = Optional.ofNullable(group)
