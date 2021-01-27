@@ -10,6 +10,9 @@ import com.fanxuankai.canal.redis.config.CanalRedisConfiguration;
 public class CanalRedisDemo {
     public static void main(String[] args) {
         CanalConfiguration canalConfiguration = new CanalConfiguration();
+        CanalConfiguration.Cluster cluster = new CanalConfiguration.Cluster();
+        cluster.setNodes("localhost:3181,localhost:3182,localhost:3183");
+        canalConfiguration.setCluster(cluster);
         canalConfiguration.setInstance("canalRedisExample");
         canalConfiguration.setFilter("canal_client_example.t_user");
         canalConfiguration.setShowEventLog(true);
