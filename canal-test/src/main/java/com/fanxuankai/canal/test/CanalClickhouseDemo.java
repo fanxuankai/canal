@@ -19,8 +19,7 @@ import java.util.Map;
 public class CanalClickhouseDemo {
     public static void main(String[] args) {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/canal_db?autoReconnect=true&useUnicode=true" +
-                "&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai");
+        hikariConfig.setJdbcUrl("jdbc:clickhouse://localhost:8123/default");
         hikariConfig.setDriverClassName("ru.yandex.clickhouse.ClickHouseDriver");
         hikariConfig.setUsername("root");
         hikariConfig.setPassword("123456");
