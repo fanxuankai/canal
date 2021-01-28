@@ -26,6 +26,10 @@
             <artifactId>canal-mysql</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fanxuankai.canal</groupId>
+            <artifactId>canal-clickhouse</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
         </dependency>
