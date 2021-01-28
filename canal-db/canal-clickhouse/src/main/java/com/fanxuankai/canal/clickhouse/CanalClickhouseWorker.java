@@ -1,7 +1,8 @@
 package com.fanxuankai.canal.clickhouse;
 
-import com.alibaba.otter.canal.protocol.CanalEntry;
+import com.fanxuankai.canal.clickhouse.consumer.DeleteConsumer;
 import com.fanxuankai.canal.clickhouse.consumer.InsertConsumer;
+import com.fanxuankai.canal.clickhouse.consumer.UpdateConsumer;
 import com.fanxuankai.canal.core.CanalWorker;
 import com.fanxuankai.canal.core.ConsumerConfigFactory;
 import com.fanxuankai.canal.core.EntryConsumerFactory;
@@ -12,6 +13,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;
+
+import static com.alibaba.otter.canal.protocol.CanalEntry.EventType.*;
 
 /**
  * @author fanxuankai
@@ -31,7 +34,9 @@ public class CanalClickhouseWorker extends CanalWorker {
                 consumerConfigMap.forEach((table, consumerConfig) ->
                         consumerConfigFactory.put(schema, table, consumerConfig)));
         EntryConsumerFactory entryConsumerFactory = new EntryConsumerFactory();
-        entryConsumerFactory.put(CanalEntry.EventType.INSERT, new InsertConsumer(jdbcTemplate, canalDbConfiguration));
+        entryConsumerFactory.put(INSERT, new InsertConsumer(jdbcTemplate, canalDbConfiguration));
+        entryConsumerFactory.put(UPDATE, new UpdateConsumer(jdbcTemplate, canalDbConfiguration));
+        entryConsumerFactory.put(DELETE, new DeleteConsumer(jdbcTemplate, canalDbConfiguration));
         CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
         canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
         canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
