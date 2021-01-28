@@ -3,16 +3,16 @@ package com.fanxuankai.canal.db.core.consumer;
 import com.fanxuankai.canal.core.EntryConsumer;
 import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.db.core.config.CanalDbConfiguration;
+import com.fanxuankai.canal.db.core.util.SqlUtils;
 import com.fanxuankai.commons.util.ThrowableUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,18 +29,13 @@ public abstract class AbstractDbConsumer implements EntryConsumer<List<String>> 
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void accept(List<String> batchSql) {
-        batchSql.stream()
-                .filter(StringUtils::hasText)
-                .forEach(s -> {
-                    try {
-                        jdbcTemplate.execute(s);
-                    } catch (Throwable throwable) {
-                        ThrowableUtils.checkException(throwable, DuplicateKeyException.class,
-                                SQLIntegrityConstraintViolationException.class);
-                    }
-                });
+        try {
+            SqlUtils.executeBatch(Objects.requireNonNull(jdbcTemplate.getDataSource()), batchSql);
+        } catch (Throwable throwable) {
+            ThrowableUtils.checkException(throwable, DuplicateKeyException.class,
+                    SQLIntegrityConstraintViolationException.class);
+        }
     }
 
     /**
