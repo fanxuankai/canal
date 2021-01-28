@@ -4,10 +4,10 @@
 ![](http://processon.com/chart_image/5eda399f0791297145d394b3.png)
 
 ## 功能
-- **Redis**：实时刷新缓存 [canal-redis-boot-starter](https://github.com/fanxuankai/canal/tree/main/canal-boot-starter/canal-redis-boot-starter)
-- **Elasticsearch**：自动构建索引 [canal-es-boot-starter](https://github.com/fanxuankai/canal/tree/main/canal-boot-starter/canal-elasticsearch-boot-starter)
-- **DB**：数据库同步 [canal-mysql-boot-starter](https://github.com/fanxuankai/canal/tree/main/canal-boot-starter/canal-mysql-boot-starter)
-- **MQ**：数据监听, 自动下发任务, 目前支持 RabbitMQ、XXL-MQ、RocketMQ、Kafka [canal-rabbitmq-boot-starter](https://github.com/fanxuankai/canal/tree/main/canal-boot-starter/canal-rabbitmq-boot-starter)
+- **Redis**：实时刷新缓存 [canal-redis](https://github.com/fanxuankai/canal/tree/main/canal-redis)
+- **Elasticsearch**：自动构建索引 [canal-elasticsearch](https://github.com/fanxuankai/canal/tree/main/canal-elasticsearch)
+- **DB**：数据库同步, 目前支持 MySQL、ClickHouse [canal-mysql](https://github.com/fanxuankai/canal/tree/main/canal-db/canal-mysql)
+- **MQ**：数据监听, 自动下发任务, 目前支持 RabbitMQ、XXL-MQ、RocketMQ、Kafka [canal-rabbitmq](https://github.com/fanxuankai/canal/tree/main/canal-mq/canal-rabbitmq)
 
 ## 运行环境
 - Canal 服务
