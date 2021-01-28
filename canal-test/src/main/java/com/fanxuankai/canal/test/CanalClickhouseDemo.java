@@ -39,7 +39,7 @@ public class CanalClickhouseDemo {
         consumerConfigMap.put("canal_client_example", consumerConfigValue);
 
         CanalConfiguration canalConfiguration = new CanalConfiguration();
-        canalConfiguration.setInstance("canalMysqlExample");
+        canalConfiguration.setInstance("canalClickhouseExample");
         canalConfiguration.setFilter("canal_client_example.t_user");
         canalConfiguration.setShowEventLog(true);
         canalConfiguration.setShowEntryLog(true);
