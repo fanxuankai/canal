@@ -10,10 +10,7 @@ import org.springframework.util.StringUtils;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +47,8 @@ public final class SqlUtils {
      */
     public static String convertInsert(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration) {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("insert into %s", canalDbConfiguration.getTableName(entryWrapper)));
+        sb.append(String.format("insert into %s.%s", canalDbConfiguration.getSchemaName(entryWrapper),
+                canalDbConfiguration.getTableName(entryWrapper)));
         List<ColumnMapInfo> columnMapInfos = columnMap(entryWrapper, canalDbConfiguration, true);
         List<String> newNames = columnMapInfos.stream().map(ColumnMapInfo::getNewName).collect(Collectors.toList());
         sb.append(String.format(" ( %s ) ", String.join(",", newNames)));
@@ -87,8 +85,8 @@ public final class SqlUtils {
      */
     public static List<String> convertUpdate(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration) {
         return convertUpdate(entryWrapper, canalDbConfiguration,
-                (tableName, setSql, idName, idValue) -> String.format("update %s set %s where %s = '%s'", tableName,
-                        setSql, idName, idValue));
+                (schemaName, tableName, setSql, idName, idValue) -> String.format("update %s.%s set %s where %s = '%s'",
+                        schemaName, tableName, setSql, idName, idValue));
     }
 
     /**
@@ -100,18 +98,24 @@ public final class SqlUtils {
      */
     public static List<String> convertUpdate(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration,
                                              ConvertUpdateFunction function) {
+        String schemaName = canalDbConfiguration.getSchemaName(entryWrapper);
         String tableName = canalDbConfiguration.getTableName(entryWrapper);
-        List<ColumnMapInfo> columnMapInfos = columnMap(entryWrapper, canalDbConfiguration, false);
         List<String> ignoreChangeColumns = canalDbConfiguration.getIgnoreChangeColumns(entryWrapper);
+        List<ColumnMapInfo> columnMapInfos = columnMap(entryWrapper, canalDbConfiguration, false);
+        List<ColumnMapInfo> updatedColumnMapInfo = columnMapInfos.stream()
+                .filter(ColumnMapInfo::isUpdated)
+                .filter(columnMapInfo -> !ignoreChangeColumns.contains(columnMapInfo.getName()))
+                .collect(Collectors.toList());
+        if (updatedColumnMapInfo.isEmpty()) {
+            return Collections.emptyList();
+        }
         return entryWrapper.getAllRowDataList().stream()
                 .map(o -> o.getAfterColumnsList()
                         .stream()
                         .collect(Collectors.toMap(CanalEntry.Column::getName,
                                 CanalEntry.Column::getValue)))
                 .map(map -> {
-                    String setSql = columnMapInfos.stream()
-                            .filter(ColumnMapInfo::isUpdated)
-                            .filter(columnMapInfo -> !ignoreChangeColumns.contains(columnMapInfo.getName()))
+                    String setSql = updatedColumnMapInfo.stream()
                             .map(columnMapInfo -> {
                                 String value = map.get(columnMapInfo.getName());
                                 if (!StringUtils.hasText(value)) {
@@ -128,7 +132,7 @@ public final class SqlUtils {
                             idValue = map.get(columnMapInfo.getName());
                         }
                     }
-                    return function.apply(tableName, setSql, idName, idValue);
+                    return function.apply(schemaName, tableName, setSql, idName, idValue);
                 })
                 .collect(Collectors.toList());
     }
@@ -141,8 +145,9 @@ public final class SqlUtils {
      * @return List
      */
     public static String convertDelete(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration) {
-        return convertDelete(entryWrapper, canalDbConfiguration, (tableName, idName, ids)
-                -> String.format("delete from %s where %s in ( %s )", entryWrapper.getTableName(), idName, ids));
+        return convertDelete(entryWrapper, canalDbConfiguration, (schemaName, tableName, idName, ids)
+                -> String.format("delete from %s.%s where %s in ( %s )",
+                schemaName, tableName, idName, ids));
     }
 
     /**
@@ -171,7 +176,8 @@ public final class SqlUtils {
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
         idName = Optional.ofNullable(canalDbConfiguration.getColumnMap(entryWrapper).get(idName)).orElse(idName);
-        return function.apply(entryWrapper.getTableName(), idName, ids);
+        return function.apply(canalDbConfiguration.getSchemaName(entryWrapper),
+                canalDbConfiguration.getTableName(entryWrapper), idName, ids);
     }
 
     /**

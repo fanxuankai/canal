@@ -26,7 +26,7 @@ public class DeleteConsumer extends AbstractDbConsumer {
     @Override
     public List<String> apply(EntryWrapper entryWrapper) {
         return Collections.singletonList(SqlUtils.convertDelete(entryWrapper, canalDbConfiguration,
-                (tableName, idName, ids) -> String.format("ALTER TABLE %s DELETE where %s in ( %s )",
+                (schemaName, tableName, idName, ids) -> String.format("ALTER TABLE %s DELETE where %s in ( %s )",
                         entryWrapper.getTableName(), idName, ids)));
     }
 

@@ -19,32 +19,26 @@ import java.util.Map;
 public class CanalClickhouseDemo {
     public static void main(String[] args) {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:clickhouse://localhost:8123/default");
+        hikariConfig.setJdbcUrl("jdbc:clickhouse://192.168.173.201:8123");
         hikariConfig.setDriverClassName("ru.yandex.clickhouse.ClickHouseDriver");
-        hikariConfig.setUsername("root");
-        hikariConfig.setPassword("123456");
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
         Map<String, Map<String, DbConsumerConfig>> consumerConfigMap = new HashMap<>(16);
         Map<String, DbConsumerConfig> consumerConfigValue = new HashMap<>(16);
-        Map<String, String> userColumnMap = new HashMap<>(16);
-        Map<String, String> userDefaultValues = new HashMap<>(16);
-        userDefaultValues.put("deleted", "0");
-        userColumnMap.put("version", "version1");
         DbConsumerConfig dbConsumerConfig = new DbConsumerConfig();
-        dbConsumerConfig.setDefaultValues(userDefaultValues);
-        dbConsumerConfig.setExcludeColumns(Collections.singletonList("status"));
-        dbConsumerConfig.setColumnMap(userColumnMap);
-        consumerConfigValue.put("t_user", dbConsumerConfig);
-        consumerConfigMap.put("canal_client_example", consumerConfigValue);
+        dbConsumerConfig.setIgnoreChangeColumns(Collections.singletonList("date"));
+        dbConsumerConfig.setSchemaName("default");
+        consumerConfigValue.put("dept", dbConsumerConfig);
+        consumerConfigValue.put("post", dbConsumerConfig);
+        consumerConfigValue.put("user", dbConsumerConfig);
+        consumerConfigMap.put("clickhouse_demo", consumerConfigValue);
         CanalDbConfiguration canalDbConfiguration = new CanalDbConfiguration();
         canalDbConfiguration.setConsumerConfigMap(consumerConfigMap);
 
         CanalConfiguration canalConfiguration = new CanalConfiguration();
         canalConfiguration.setInstance("canalClickhouseExample");
-        canalConfiguration.setFilter("canal_client_example.t_user");
+        canalConfiguration.setFilter("clickhouse_demo.user,clickhouse_demo.dept,clickhouse_demo.post");
         canalConfiguration.setShowEventLog(true);
-        canalConfiguration.setShowEntryLog(true);
         canalConfiguration.setBatchSize(10000);
 
         CanalWorker canalWorker = CanalClickhouseWorker.newCanalWorker(canalConfiguration, canalDbConfiguration,

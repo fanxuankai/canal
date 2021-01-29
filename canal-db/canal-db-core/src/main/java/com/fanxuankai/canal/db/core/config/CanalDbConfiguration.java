@@ -42,6 +42,10 @@ public class CanalDbConfiguration {
         return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getDefaultValues).orElse(Collections.emptyMap());
     }
 
+    public String getSchemaName(EntryWrapper entryWrapper) {
+        return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getSchemaName).orElse(entryWrapper.getSchemaName());
+    }
+
     public String getTableName(EntryWrapper entryWrapper) {
         return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getTableName).orElse(entryWrapper.getTableName());
     }

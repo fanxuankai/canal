@@ -18,9 +18,10 @@ public class UpdateConsumer extends AbstractClickhouseConsumer {
 
     @Override
     public List<String> apply(EntryWrapper entryWrapper) {
-        return SqlUtils.convertUpdate(entryWrapper, canalDbConfiguration, (tableName, setSql, idName, idValue)
-                -> String.format("ALTER TABLE %s UPDATE %s where %s = '%s'", tableName, setSql, idName,
-                idValue));
+        return SqlUtils.convertUpdate(entryWrapper, canalDbConfiguration,
+                (schemaName, tableName, setSql, idName, idValue)
+                        -> String.format("ALTER TABLE %s.%s UPDATE %s where %s = '%s'",
+                        schemaName, tableName, setSql, idName, idValue));
     }
 
 }

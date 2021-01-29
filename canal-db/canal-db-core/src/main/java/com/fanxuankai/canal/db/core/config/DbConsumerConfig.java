@@ -9,6 +9,12 @@ import java.util.Map;
  * @author fanxuankai
  */
 public class DbConsumerConfig extends ConsumerConfig {
+
+    /**
+     * 数据库
+     */
+    private String schemaName;
+
     /**
      * 表名
      */
@@ -38,6 +44,14 @@ public class DbConsumerConfig extends ConsumerConfig {
      * 忽略变化
      */
     private List<String> ignoreChangeColumns;
+
+    public String getSchemaName() {
+        return schemaName;
+    }
+
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
 
     public String getTableName() {
         return tableName;

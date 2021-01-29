@@ -8,10 +8,11 @@ public interface ConvertDeleteFunction {
     /**
      * 转 delete 脚本
      *
-     * @param tableName /
-     * @param idName    /
-     * @param ids       /
+     * @param schemaName /
+     * @param tableName  /
+     * @param idName     /
+     * @param ids        /
      * @return String
      */
-    String apply(String tableName, String idName, String ids);
+    String apply(String schemaName, String tableName, String idName, String ids);
 }
