@@ -47,7 +47,7 @@ public class SimpleOtter extends AbstractOtter {
 
         // convert
         start = System.currentTimeMillis();
-        MessageWrapper wrapper = new MessageWrapper(message);
+        MessageWrapper wrapper = new MessageWrapper(message, canalConfiguration);
         MessageUtils.logicDeleteConvert(wrapper, canalConfiguration, canalWorkConfiguration.getConsumerConfigFactory());
         t = System.currentTimeMillis() - start;
         if (showEventLog) {

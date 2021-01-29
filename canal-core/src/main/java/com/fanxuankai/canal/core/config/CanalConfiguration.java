@@ -104,6 +104,11 @@ public class CanalConfiguration {
      */
     private Boolean parallel;
 
+    /**
+     * 合并 Message entries 处理
+     */
+    private Boolean mergeEntry;
+
     public String getId() {
         return StringUtils.hasText(id) ? id : instance;
     }
@@ -254,6 +259,14 @@ public class CanalConfiguration {
 
     public void setParallel(Boolean parallel) {
         this.parallel = parallel;
+    }
+
+    public Boolean getMergeEntry() {
+        return mergeEntry;
+    }
+
+    public void setMergeEntry(Boolean mergeEntry) {
+        this.mergeEntry = mergeEntry;
     }
 
     public static class Cluster {

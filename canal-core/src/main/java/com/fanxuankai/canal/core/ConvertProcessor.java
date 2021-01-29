@@ -43,7 +43,7 @@ public class ConvertProcessor extends SubmissionPublisher<MessageWrapper>
     @Override
     public void onNext(Message item) {
         long start = System.currentTimeMillis();
-        MessageWrapper wrapper = new MessageWrapper(item);
+        MessageWrapper wrapper = new MessageWrapper(item, canalConfiguration);
         MessageUtils.logicDeleteConvert(wrapper, canalConfiguration, consumerConfigFactory);
         long t = System.currentTimeMillis() - start;
         if (canalConfiguration.isShowEventLog() && !item.getEntries().isEmpty()) {

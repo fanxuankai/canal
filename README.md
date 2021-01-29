@@ -68,6 +68,12 @@ canal:
       #logic-delete-field: deleted
       # 激活逻辑删除
       #enable-logic-delete: false
+      # 抢占运行
+      #preemptive:
+      # 并行处理
+      #parallel: false
+      # 合并 Message entries 处理
+      #mergeEntry: false
 ```
 
 ## 常见问题
