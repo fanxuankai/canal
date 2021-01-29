@@ -13,22 +13,31 @@ public class DbConsumerConfig extends ConsumerConfig {
      * 表名
      */
     private String tableName;
+
     /**
      * 包含的列
      */
     private List<String> includeColumns;
+
     /**
      * 排除的列
      */
     private List<String> excludeColumns;
+
     /**
      * key: 源字段名 value: 目标字段名
      */
     private Map<String, String> columnMap;
+
     /**
      * 目标数据库设默认值
      */
     private Map<String, String> defaultValues;
+
+    /**
+     * 忽略变化
+     */
+    private List<String> ignoreChangeColumns;
 
     public String getTableName() {
         return tableName;
@@ -68,5 +77,13 @@ public class DbConsumerConfig extends ConsumerConfig {
 
     public void setDefaultValues(Map<String, String> defaultValues) {
         this.defaultValues = defaultValues;
+    }
+
+    public List<String> getIgnoreChangeColumns() {
+        return ignoreChangeColumns;
+    }
+
+    public void setIgnoreChangeColumns(List<String> ignoreChangeColumns) {
+        this.ignoreChangeColumns = ignoreChangeColumns;
     }
 }

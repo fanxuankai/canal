@@ -6,6 +6,7 @@ import com.fanxuankai.canal.db.core.consumer.AbstractDbConsumer;
 import com.fanxuankai.canal.db.core.util.SqlUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ public class DeleteConsumer extends AbstractDbConsumer {
 
     @Override
     public List<String> apply(EntryWrapper entryWrapper) {
-        return SqlUtils.convertDelete(entryWrapper, canalDbConfiguration);
+        return Collections.singletonList(SqlUtils.convertDelete(entryWrapper, canalDbConfiguration));
     }
+
 }

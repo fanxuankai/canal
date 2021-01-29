@@ -6,6 +6,7 @@ import com.fanxuankai.canal.db.core.consumer.AbstractDbConsumer;
 import com.fanxuankai.canal.db.core.util.SqlUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public class InsertConsumer extends AbstractDbConsumer {
 
     @Override
     public List<String> apply(EntryWrapper entryWrapper) {
-        return SqlUtils.convertInsert(entryWrapper, canalDbConfiguration);
+        return Collections.singletonList(SqlUtils.convertInsert(entryWrapper, canalDbConfiguration));
     }
 
 }

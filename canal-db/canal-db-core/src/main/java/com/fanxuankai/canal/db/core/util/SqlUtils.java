@@ -10,7 +10,10 @@ import org.springframework.util.StringUtils;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +48,7 @@ public final class SqlUtils {
      * @param canalDbConfiguration 配置
      * @return List
      */
-    public static List<String> convertInsert(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration) {
+    public static String convertInsert(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("insert into %s", canalDbConfiguration.getTableName(entryWrapper)));
         List<ColumnMapInfo> columnMapInfos = columnMap(entryWrapper, canalDbConfiguration, true);
@@ -72,7 +75,7 @@ public final class SqlUtils {
                         })
                         .collect(Collectors.joining(",", "(", ")")))
                 .collect(Collectors.joining(",")));
-        return Collections.singletonList(sb.toString());
+        return sb.toString();
     }
 
     /**
@@ -83,13 +86,32 @@ public final class SqlUtils {
      * @return List
      */
     public static List<String> convertUpdate(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration) {
+        return convertUpdate(entryWrapper, canalDbConfiguration,
+                (tableName, setSql, idName, idValue) -> String.format("update %s set %s where %s = '%s'", tableName,
+                        setSql, idName, idValue));
+    }
+
+    /**
+     * 转 update 语句
+     *
+     * @param entryWrapper         数据
+     * @param canalDbConfiguration 配置
+     * @return List
+     */
+    public static List<String> convertUpdate(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration,
+                                             ConvertUpdateFunction function) {
         String tableName = canalDbConfiguration.getTableName(entryWrapper);
         List<ColumnMapInfo> columnMapInfos = columnMap(entryWrapper, canalDbConfiguration, false);
+        List<String> ignoreChangeColumns = canalDbConfiguration.getIgnoreChangeColumns(entryWrapper);
         return entryWrapper.getAllRowDataList().stream()
-                .map(o -> o.getAfterColumnsList().stream().collect(Collectors.toMap(CanalEntry.Column::getName,
-                        CanalEntry.Column::getValue)))
+                .map(o -> o.getAfterColumnsList()
+                        .stream()
+                        .collect(Collectors.toMap(CanalEntry.Column::getName,
+                                CanalEntry.Column::getValue)))
                 .map(map -> {
                     String setSql = columnMapInfos.stream()
+                            .filter(ColumnMapInfo::isUpdated)
+                            .filter(columnMapInfo -> !ignoreChangeColumns.contains(columnMapInfo.getName()))
                             .map(columnMapInfo -> {
                                 String value = map.get(columnMapInfo.getName());
                                 if (!StringUtils.hasText(value)) {
@@ -106,7 +128,7 @@ public final class SqlUtils {
                             idValue = map.get(columnMapInfo.getName());
                         }
                     }
-                    return String.format("update %s set %s where %s = '%s'", tableName, setSql, idName, idValue);
+                    return function.apply(tableName, setSql, idName, idValue);
                 })
                 .collect(Collectors.toList());
     }
@@ -118,7 +140,20 @@ public final class SqlUtils {
      * @param canalDbConfiguration 配置
      * @return List
      */
-    public static List<String> convertDelete(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration) {
+    public static String convertDelete(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration) {
+        return convertDelete(entryWrapper, canalDbConfiguration, (tableName, idName, ids)
+                -> String.format("delete from %s where %s in ( %s )", entryWrapper.getTableName(), idName, ids));
+    }
+
+    /**
+     * 转 delete 语句
+     *
+     * @param entryWrapper         数据
+     * @param canalDbConfiguration 配置
+     * @return List
+     */
+    public static String convertDelete(EntryWrapper entryWrapper, CanalDbConfiguration canalDbConfiguration,
+                                       ConvertDeleteFunction function) {
         String idName = entryWrapper.getAllRowDataList().get(0)
                 .getBeforeColumnsList()
                 .stream()
@@ -136,8 +171,7 @@ public final class SqlUtils {
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
         idName = Optional.ofNullable(canalDbConfiguration.getColumnMap(entryWrapper).get(idName)).orElse(idName);
-        return Collections.singletonList(String.format("delete from %s where %s in ( %s )",
-                entryWrapper.getTableName(), idName, ids));
+        return function.apply(entryWrapper.getTableName(), idName, ids);
     }
 
     /**
@@ -175,6 +209,7 @@ public final class SqlUtils {
                     columnMapInfo.setName(column.getName());
                     columnMapInfo.setNewName(newName);
                     columnMapInfo.setDefaultValue(defaultValues.get(newName));
+                    columnMapInfo.setUpdated(column.getUpdated());
                     return columnMapInfo;
                 })
                 .collect(Collectors.toList());

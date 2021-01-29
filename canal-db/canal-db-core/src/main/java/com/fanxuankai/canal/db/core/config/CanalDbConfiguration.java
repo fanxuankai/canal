@@ -23,11 +23,15 @@ public class CanalDbConfiguration {
     }
 
     public List<String> getExcludeColumns(EntryWrapper entryWrapper) {
-        return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getExcludeColumns).orElse(null);
+        return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getExcludeColumns).orElse(Collections.emptyList());
     }
 
     public List<String> getIncludeColumns(EntryWrapper entryWrapper) {
-        return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getIncludeColumns).orElse(null);
+        return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getIncludeColumns).orElse(Collections.emptyList());
+    }
+
+    public List<String> getIgnoreChangeColumns(EntryWrapper entryWrapper) {
+        return getConsumerConfig(entryWrapper).map(DbConsumerConfig::getIgnoreChangeColumns).orElse(Collections.emptyList());
     }
 
     public Map<String, String> getColumnMap(EntryWrapper entryWrapper) {

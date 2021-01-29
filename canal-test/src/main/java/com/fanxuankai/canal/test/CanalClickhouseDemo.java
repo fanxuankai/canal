@@ -37,6 +37,8 @@ public class CanalClickhouseDemo {
         dbConsumerConfig.setColumnMap(userColumnMap);
         consumerConfigValue.put("t_user", dbConsumerConfig);
         consumerConfigMap.put("canal_client_example", consumerConfigValue);
+        CanalDbConfiguration canalDbConfiguration = new CanalDbConfiguration();
+        canalDbConfiguration.setConsumerConfigMap(consumerConfigMap);
 
         CanalConfiguration canalConfiguration = new CanalConfiguration();
         canalConfiguration.setInstance("canalClickhouseExample");
@@ -44,8 +46,7 @@ public class CanalClickhouseDemo {
         canalConfiguration.setShowEventLog(true);
         canalConfiguration.setShowEntryLog(true);
         canalConfiguration.setBatchSize(10000);
-        CanalDbConfiguration canalDbConfiguration = new CanalDbConfiguration();
-        canalDbConfiguration.setConsumerConfigMap(consumerConfigMap);
+
         CanalWorker canalWorker = CanalClickhouseWorker.newCanalWorker(canalConfiguration, canalDbConfiguration,
                 new JdbcTemplate(dataSource));
         canalWorker.getCanalWorkConfiguration()
