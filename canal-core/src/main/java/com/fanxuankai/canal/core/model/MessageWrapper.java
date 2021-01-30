@@ -29,6 +29,7 @@ public class MessageWrapper {
                     .map(entryWrapper -> entryWrapper.getSchemaName()
                             + entryWrapper.getTableName()
                             + entryWrapper.getEventType())
+                    .distinct()
                     .count() == 1) {
                 // 相同 schema、table、eventType, 合并为一个 Entry
                 EntryWrapper last = entryWrapperList.get(entryWrapperList.size() - 1);
