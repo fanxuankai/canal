@@ -9,12 +9,15 @@ import java.util.List;
  * @author fanxuankai
  */
 public class EntryWrapper {
-    private final CanalEntry.Entry raw;
+    private CanalEntry.Entry raw;
     /**
      * RowChange 所有数据, 可变集合, 支持数据过滤
      */
     private List<CanalEntry.RowData> allRowDataList;
     private CanalEntry.EventType eventType;
+
+    public EntryWrapper() {
+    }
 
     public EntryWrapper(CanalEntry.Entry raw) {
         this.raw = raw;
@@ -29,6 +32,10 @@ public class EntryWrapper {
 
     public CanalEntry.Entry getRaw() {
         return raw;
+    }
+
+    public void setRaw(CanalEntry.Entry raw) {
+        this.raw = raw;
     }
 
     public List<CanalEntry.RowData> getAllRowDataList() {

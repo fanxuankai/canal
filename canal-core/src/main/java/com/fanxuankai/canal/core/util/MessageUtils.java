@@ -35,7 +35,7 @@ public class MessageUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageUtils.class);
 
     /**
-     * 逻辑删除
+     * 逻辑删除转换
      *
      * @param wrapper               MessageWrapper
      * @param canalConfiguration    CanalConfiguration
@@ -66,7 +66,8 @@ public class MessageUtils {
                                     Boolean.class), Boolean.TRUE)))
                     .collect(Collectors.toList());
             if (!logicDeletedRowDataList.isEmpty()) {
-                EntryWrapper logicDeletedEntryWrapper = new EntryWrapper(entryWrapper.getRaw());
+                EntryWrapper logicDeletedEntryWrapper = new EntryWrapper();
+                logicDeletedEntryWrapper.setRaw(entryWrapper.getRaw());
                 logicDeletedEntryWrapper.setEventType(CanalEntry.EventType.DELETE);
                 logicDeletedRowDataList.forEach(rowData -> {
                     try {
