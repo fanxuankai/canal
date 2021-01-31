@@ -359,7 +359,7 @@ public class CanalConfiguration {
         /**
          * 合并后的最大数据行数量
          */
-        private Integer maxRowDataSize = 500;
+        private Integer maxRowDataSize = 1000;
 
         public Boolean getMerge() {
             return merge;
