@@ -105,9 +105,9 @@ public class CanalConfiguration {
     private Boolean parallel;
 
     /**
-     * 合并 Message entries 处理
+     * 相同 schema、table、eventType, 合并为一个 Entry
      */
-    private Boolean mergeEntry;
+    private MergeEntry mergeEntry = new MergeEntry();
 
     public String getId() {
         return StringUtils.hasText(id) ? id : instance;
@@ -261,11 +261,11 @@ public class CanalConfiguration {
         this.parallel = parallel;
     }
 
-    public Boolean getMergeEntry() {
+    public MergeEntry getMergeEntry() {
         return mergeEntry;
     }
 
-    public void setMergeEntry(Boolean mergeEntry) {
+    public void setMergeEntry(MergeEntry mergeEntry) {
         this.mergeEntry = mergeEntry;
     }
 
@@ -347,6 +347,34 @@ public class CanalConfiguration {
 
         public void setPing(Long ping) {
             this.ping = ping;
+        }
+    }
+
+    public static class MergeEntry {
+        /**
+         * 是否合并
+         */
+        private Boolean merge;
+
+        /**
+         * 合并后的最大数据行数量
+         */
+        private Integer maxRowDataSize = 500;
+
+        public Boolean getMerge() {
+            return merge;
+        }
+
+        public void setMerge(Boolean merge) {
+            this.merge = merge;
+        }
+
+        public Integer getMaxRowDataSize() {
+            return maxRowDataSize;
+        }
+
+        public void setMaxRowDataSize(Integer maxRowDataSize) {
+            this.maxRowDataSize = maxRowDataSize;
         }
     }
 

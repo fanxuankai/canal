@@ -19,7 +19,9 @@ public class CanalRedisDemo {
         canalConfiguration.setShowEntryLog(false);
         canalConfiguration.setBatchSize(10000);
         canalConfiguration.setParallel(true);
-        canalConfiguration.setMergeEntry(true);
+        CanalConfiguration.MergeEntry mergeEntry = new CanalConfiguration.MergeEntry();
+        mergeEntry.setMerge(true);
+        canalConfiguration.setMergeEntry(mergeEntry);
         CanalRedisWorker.newCanalWorker(canalConfiguration, new CanalRedisConfiguration(),
                 RedisTemplates.newRedisTemplate())
                 .start();

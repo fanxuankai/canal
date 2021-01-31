@@ -70,13 +70,13 @@ public class EntryWrapper {
         return raw.getHeader().getLogfileOffset();
     }
 
-    public int getRawRowDataCount() {
+    public int getRowDataCount() {
         return allRowDataList.size();
     }
 
     @Override
     public String toString() {
         return String.format("%s.%s %s.%s.%s rowDataCount: %s", getLogfileName(), getLogfileOffset(), getSchemaName(),
-                getTableName(), getEventType(), getRawRowDataCount());
+                getTableName(), getEventType(), getRowDataCount());
     }
 }

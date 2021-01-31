@@ -36,7 +36,7 @@ public class DbConsumerConfig extends ConsumerConfig {
     private Map<String, String> columnMap;
 
     /**
-     * 目标数据库设默认值
+     * key: 目标字段名 value: 默认值
      */
     private Map<String, String> defaultValues;
 

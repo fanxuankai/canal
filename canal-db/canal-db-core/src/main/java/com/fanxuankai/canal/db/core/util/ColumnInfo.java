@@ -1,9 +1,11 @@
-package com.fanxuankai.canal.db.core.model;
+package com.fanxuankai.canal.db.core.util;
 
 /**
+ * 列信息
+ *
  * @author fanxuankai
  */
-public class ColumnMapInfo {
+class ColumnInfo {
     /**
      * 主键
      */
@@ -24,11 +26,6 @@ public class ColumnMapInfo {
      * 默认值
      */
     private String defaultValue;
-
-    /**
-     * 是否更新
-     */
-    private boolean updated;
 
     public boolean isPrimary() {
         return primary;
@@ -60,13 +57,5 @@ public class ColumnMapInfo {
 
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
-    }
-
-    public boolean isUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(boolean updated) {
-        this.updated = updated;
     }
 }

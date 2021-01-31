@@ -39,7 +39,11 @@ public class CanalClickhouseDemo {
         canalConfiguration.setInstance("canalClickhouseExample");
         canalConfiguration.setFilter("clickhouse_demo.user,clickhouse_demo.dept,clickhouse_demo.post");
         canalConfiguration.setShowEventLog(true);
-        canalConfiguration.setBatchSize(10000);
+        CanalConfiguration.MergeEntry mergeEntry = new CanalConfiguration.MergeEntry();
+        mergeEntry.setMerge(true);
+        canalConfiguration.setMergeEntry(mergeEntry);
+        canalConfiguration.setBatchSize(500);
+        canalConfiguration.setParallel(true);
 
         CanalWorker canalWorker = CanalClickhouseWorker.newCanalWorker(canalConfiguration, canalDbConfiguration,
                 new JdbcTemplate(dataSource));

@@ -2,8 +2,8 @@ package com.fanxuankai.canal.core.model;
 
 import com.alibaba.otter.canal.protocol.Message;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
+import com.google.common.collect.Lists;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,24 +22,36 @@ public class MessageWrapper {
                 .stream()
                 .map(EntryWrapper::new)
                 .collect(Collectors.toList());
-        // 合并
-        if (Objects.equals(canalConfiguration.getMergeEntry(), Boolean.TRUE)
+        if (Objects.equals(canalConfiguration.getMergeEntry().getMerge(), Boolean.TRUE)
                 && entryWrapperList.size() > 1) {
-            if (entryWrapperList.stream()
-                    .map(entryWrapper -> entryWrapper.getSchemaName()
-                            + entryWrapper.getTableName()
-                            + entryWrapper.getEventType())
-                    .distinct()
-                    .count() == 1) {
-                // 相同 schema、table、eventType, 合并为一个 Entry
-                EntryWrapper last = entryWrapperList.get(entryWrapperList.size() - 1);
-                last.setAllRowDataList(entryWrapperList.stream()
-                        .flatMap(o -> o.getAllRowDataList().stream())
-                        .collect(Collectors.toList()));
-                this.entryWrapperList = Collections.singletonList(last);
+            List<EntryWrapper> combineEntryWrapperList = Lists.newArrayList();
+            EntryWrapper lastEntryWrapper = entryWrapperList.get(0);
+            String lastEventKey = eventKey(lastEntryWrapper);
+            for (int i = 1; i < entryWrapperList.size(); i++) {
+                EntryWrapper currentEntryWrapper = entryWrapperList.get(i);
+                String currentEventKey = eventKey(currentEntryWrapper);
+                if (Objects.equals(currentEventKey, lastEventKey)
+                        && lastEntryWrapper.getRowDataCount() + currentEntryWrapper.getRowDataCount()
+                        <= canalConfiguration.getMergeEntry().getMaxRowDataSize()) {
+                    // 满足条件合并 entry
+                    lastEntryWrapper.getAllRowDataList().addAll(currentEntryWrapper.getAllRowDataList());
+                } else {
+                    // 不满足条件开始下一个
+                    combineEntryWrapperList.add(lastEntryWrapper);
+                    lastEntryWrapper = currentEntryWrapper;
+                    lastEventKey = currentEventKey;
+                }
             }
+            combineEntryWrapperList.add(lastEntryWrapper);
+            this.entryWrapperList = combineEntryWrapperList;
         }
         this.rowDataCountBeforeFilter = getRowDataCountAfterFilter();
+    }
+
+    private static String eventKey(EntryWrapper entryWrapper) {
+        return entryWrapper.getSchemaName()
+                + entryWrapper.getTableName()
+                + entryWrapper.getEventType();
     }
 
     public int getRowDataCountBeforeFilter() {
@@ -61,7 +73,7 @@ public class MessageWrapper {
     public int getRowDataCountAfterFilter() {
         return this.entryWrapperList
                 .stream()
-                .map(EntryWrapper::getRawRowDataCount)
+                .map(EntryWrapper::getRowDataCount)
                 .reduce(Integer::sum)
                 .orElse(0);
     }
