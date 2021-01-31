@@ -22,6 +22,7 @@ public class MessageWrapper {
                 .stream()
                 .map(EntryWrapper::new)
                 .collect(Collectors.toList());
+        // 合并
         if (Objects.equals(canalConfiguration.getMergeEntry().getMerge(), Boolean.TRUE)
                 && entryWrapperList.size() > 1) {
             List<EntryWrapper> combineEntryWrapperList = Lists.newArrayList();
@@ -30,11 +31,14 @@ public class MessageWrapper {
             for (int i = 1; i < entryWrapperList.size(); i++) {
                 EntryWrapper currentEntryWrapper = entryWrapperList.get(i);
                 String currentEventKey = eventKey(currentEntryWrapper);
-                if (Objects.equals(currentEventKey, lastEventKey)
-                        && lastEntryWrapper.getRowDataCount() + currentEntryWrapper.getRowDataCount()
-                        <= canalConfiguration.getMergeEntry().getMaxRowDataSize()) {
-                    // 满足条件合并 entry
-                    lastEntryWrapper.getAllRowDataList().addAll(currentEntryWrapper.getAllRowDataList());
+                if (Objects.equals(currentEventKey, lastEventKey)) {
+                    int maxRowDataSize =
+                            canalConfiguration.getMergeEntry().getMaxRowDataSize(currentEntryWrapper.getEventType());
+                    if (lastEntryWrapper.getRowDataCount() + currentEntryWrapper.getRowDataCount()
+                            <= maxRowDataSize) {
+                        // 满足条件合并 entry
+                        lastEntryWrapper.getAllRowDataList().addAll(currentEntryWrapper.getAllRowDataList());
+                    }
                 } else {
                     // 不满足条件开始下一个
                     combineEntryWrapperList.add(lastEntryWrapper);

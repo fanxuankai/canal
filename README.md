@@ -72,8 +72,10 @@ canal:
       #preemptive:
       # 并行处理
       #parallel: false
-      # 合并 Message entries 处理
-      #mergeEntry: false
+      #相同 schema、table、eventType, 合并为一个 Entry
+      #mergeEntry: 
+        #merge: false
+        #max-row-data-size:
 ```
 
 ## 常见问题

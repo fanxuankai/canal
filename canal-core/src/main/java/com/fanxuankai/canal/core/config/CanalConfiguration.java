@@ -1,6 +1,11 @@
 package com.fanxuankai.canal.core.config;
 
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import org.springframework.util.StringUtils;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * canal参数配置
@@ -358,8 +363,9 @@ public class CanalConfiguration {
 
         /**
          * 合并后的最大数据行数量
+         * key: EventType value: 数量
          */
-        private Integer maxRowDataSize = 1000;
+        private Map<CanalEntry.EventType, Integer> maxRowDataSize = Collections.emptyMap();
 
         public Boolean getMerge() {
             return merge;
@@ -369,12 +375,16 @@ public class CanalConfiguration {
             this.merge = merge;
         }
 
-        public Integer getMaxRowDataSize() {
+        public Map<CanalEntry.EventType, Integer> getMaxRowDataSize() {
             return maxRowDataSize;
         }
 
-        public void setMaxRowDataSize(Integer maxRowDataSize) {
+        public void setMaxRowDataSize(Map<CanalEntry.EventType, Integer> maxRowDataSize) {
             this.maxRowDataSize = maxRowDataSize;
+        }
+
+        public int getMaxRowDataSize(CanalEntry.EventType eventType) {
+            return Optional.ofNullable(maxRowDataSize.get(eventType)).orElse(1000);
         }
     }
 
