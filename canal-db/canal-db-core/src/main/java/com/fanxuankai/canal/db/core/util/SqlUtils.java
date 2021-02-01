@@ -161,7 +161,7 @@ public final class SqlUtils {
                     continue;
                 }
             }
-            // 置空, 触发下一轮开始
+            // 设置开始下一轮
             combineColumnList.add(currentColumns);
             combinePkColumnList.add(Lists.newArrayList(pkColumnFunction.apply(rowData.getAfterColumnsList())));
             begin = true;
