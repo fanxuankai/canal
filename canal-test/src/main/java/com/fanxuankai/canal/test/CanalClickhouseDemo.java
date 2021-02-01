@@ -30,11 +30,11 @@ public class CanalClickhouseDemo {
         Map<String, Map<String, DbConsumerConfig>> consumerConfigMap = new HashMap<>(16);
         Map<String, DbConsumerConfig> consumerConfigValue = new HashMap<>(16);
         DbConsumerConfig dbConsumerConfig = new DbConsumerConfig();
-        dbConsumerConfig.setSchemaName("default");
         dbConsumerConfig.setIgnoreChangeColumns(Collections.singletonList("date"));
         consumerConfigMap.put("clickhouse_demo", consumerConfigValue);
         CanalDbConfiguration canalDbConfiguration = new CanalDbConfiguration();
         canalDbConfiguration.setConsumerConfigMap(consumerConfigMap);
+        canalDbConfiguration.setSchemaName("default");
 
         CanalConfiguration canalConfiguration = new CanalConfiguration();
         canalConfiguration.setInstance("canalClickhouseExample");

@@ -38,13 +38,13 @@ public class MessageWrapper {
                             <= maxRowDataSize) {
                         // 满足条件合并 entry
                         lastEntryWrapper.getAllRowDataList().addAll(currentEntryWrapper.getAllRowDataList());
+                        continue;
                     }
-                } else {
-                    // 不满足条件开始下一个
-                    combineEntryWrapperList.add(lastEntryWrapper);
-                    lastEntryWrapper = currentEntryWrapper;
-                    lastEventKey = currentEventKey;
                 }
+                // 不满足条件开始下一个
+                combineEntryWrapperList.add(lastEntryWrapper);
+                lastEntryWrapper = currentEntryWrapper;
+                lastEventKey = currentEventKey;
             }
             combineEntryWrapperList.add(lastEntryWrapper);
             this.entryWrapperList = combineEntryWrapperList;

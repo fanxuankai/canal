@@ -162,6 +162,8 @@ public final class SqlUtils {
                 }
             }
             // 置空, 触发下一轮开始
+            combineColumnList.add(currentColumns);
+            combinePkColumnList.add(Lists.newArrayList(pkColumnFunction.apply(rowData.getAfterColumnsList())));
             begin = true;
         }
         String schemaName = canalDbConfiguration.getSchemaName(entryWrapper);
