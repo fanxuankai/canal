@@ -7,6 +7,8 @@
     <artifactId>canal-dependencies</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
+    <name>Canal Dependencies</name>
+    <description>Canal Dependencies</description>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -26,68 +28,71 @@
     </scm>
     <properties>
         <revision>1.1.4-SNAPSHOT</revision>
-        <java.version>1.8</java.version>
-        <java.source.version>1.8</java.source.version>
-        <java.target.version>1.8</java.target.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <skipTests>true</skipTests>
+        <canal.client.version>1.1.4</canal.client.version>
+        <runlion-xxl-mq-client.version>1.3.0-SNAPSHOT</runlion-xxl-mq-client.version>
+        <rocketmq.version>4.6.0</rocketmq.version>
+        <spring-boot-dependencies.version>2.2.7.RELEASE</spring-boot-dependencies.version>
+        <aviator.version>4.2.10</aviator.version>
+        <reflections.version>0.9.12</reflections.version>
+        <fanxuankai-commons.version>1.0-SNAPSHOT</fanxuankai-commons.version>
+        <rocketmq-spring-boot.version>2.1.0</rocketmq-spring-boot.version>
+        <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.alibaba.otter</groupId>
                 <artifactId>canal.client</artifactId>
-                <version>1.1.4</version>
+                <version>${canal.client.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.runlion</groupId>
                 <artifactId>xxl-mq-client</artifactId>
-                <version>1.3.0-SNAPSHOT</version>
+                <version>${runlion-xxl-mq-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-all</artifactId>
-                <version>4.6.0</version>
+                <version>${rocketmq.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.2.7.RELEASE</version>
+                <version>${spring-boot-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.aviator</groupId>
                 <artifactId>aviator</artifactId>
-                <version>4.2.10</version>
+                <version>${aviator.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
-                <version>0.9.12</version>
+                <version>${reflections.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fanxuankai</groupId>
                 <artifactId>commons</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${fanxuankai-commons.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-spring-boot</artifactId>
-                <version>2.1.0</version>
+                <version>${rocketmq-spring-boot.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>canal-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>canal-db-core</artifactId>
@@ -103,13 +108,11 @@
                 <artifactId>canal-clickhouse</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>canal-elasticsearch</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>canal-kafka</artifactId>
@@ -148,84 +151,37 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.7</version>
-                    <configuration>
-                        <generateBackupPoms>false</generateBackupPoms>
-                    </configuration>
+                    <version>${versions-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                    <configuration>
-                        <compilerArgument>-Xlint:unchecked</compilerArgument>
-                    </configuration>
+                    <version>${maven-compiler-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.1</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <version>${maven-source-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.2.0</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <version>${maven-javadoc-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.1.0</version>
-                    <executions>
-                        <execution>
-                            <id>flatten</id>
-                            <phase>process-resources</phase>
-                            <goals>
-                                <goal>flatten</goal>
-                            </goals>
-                            <configuration>
-                                <updatePomFile>true</updatePomFile>
-                                <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>flatten-dependencies</id>
-                            <phase>process-resources</phase>
-                            <goals>
-                                <goal>flatten</goal>
-                            </goals>
-                            <configuration>
-                                <updatePomFile>false</updatePomFile>
-                                <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                                <pomElements>
-                                    <build>remove</build>
-                                </pomElements>
-                            </configuration>
-                            <inherited>false</inherited>
-                        </execution>
-                        <execution>
-                            <id>flatten-clean</id>
-                            <phase>clean</phase>
-                            <goals>
-                                <goal>clean</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <version>${flatten-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${nexus-staging-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -246,7 +202,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -260,7 +215,6 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>

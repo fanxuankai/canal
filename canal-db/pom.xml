@@ -2,21 +2,22 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>canal-parent</artifactId>
-        <groupId>com.fanxuankai.canal</groupId>
-        <version>${revision}</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <parent>
+        <groupId>com.fanxuankai.canal</groupId>
+        <artifactId>canal-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../canal-parent</relativePath>
+    </parent>
     <artifactId>canal-db</artifactId>
     <packaging>pom</packaging>
+    <name>Canal DB</name>
+    <description>Canal DB</description>
     <modules>
         <module>canal-db-core</module>
         <module>canal-mysql</module>
         <module>canal-clickhouse</module>
     </modules>
-
     <dependencies>
         <dependency>
             <groupId>com.fanxuankai.canal</groupId>
@@ -24,5 +25,4 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-
 </project>
