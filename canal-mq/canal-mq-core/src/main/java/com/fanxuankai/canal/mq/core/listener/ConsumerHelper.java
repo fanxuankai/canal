@@ -42,7 +42,7 @@ public class ConsumerHelper {
     }
 
     public void consume(String group, String topic, String msg) {
-        int i = topic.lastIndexOf(Constants.SEPARATOR2);
+        int i = topic.lastIndexOf(Constants.UNDERLINE);
         String rawTopic = topic.substring(0, i);
         EventType eventType = valueOf(topic.substring(i + 1));
         CanalListenerDefinition definition = Optional.ofNullable(group)

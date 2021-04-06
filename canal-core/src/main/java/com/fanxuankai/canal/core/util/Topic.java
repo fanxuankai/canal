@@ -1,6 +1,6 @@
 package com.fanxuankai.canal.core.util;
 
-import static com.fanxuankai.canal.core.constants.Constants.SEPARATOR2;
+import static com.fanxuankai.canal.core.constants.Constants.UNDERLINE;
 
 /**
  * 主题
@@ -12,22 +12,22 @@ public class Topic {
     protected static final String CANAL_2_MQ = "canal2Mq";
 
     public static String of(String schema, String table) {
-        return CANAL_2_MQ + SEPARATOR2 + schema + SEPARATOR2 + table;
+        return CANAL_2_MQ + UNDERLINE + schema + UNDERLINE + table;
     }
 
     public static String of(String schema, String table, String eventType) {
-        return CANAL_2_MQ + SEPARATOR2 + schema + SEPARATOR2 + table + SEPARATOR2 + eventType;
+        return CANAL_2_MQ + UNDERLINE + schema + UNDERLINE + table + UNDERLINE + eventType;
     }
 
     public static String custom(String queue, String eventType) {
-        return CANAL_2_MQ + SEPARATOR2 + queue + SEPARATOR2 + eventType;
+        return CANAL_2_MQ + UNDERLINE + queue + UNDERLINE + eventType;
     }
 
     public static String custom(String queue) {
-        return CANAL_2_MQ + SEPARATOR2 + queue;
+        return CANAL_2_MQ + UNDERLINE + queue;
     }
 
     public static String customWithoutPrefix(String queue, String eventType) {
-        return queue + SEPARATOR2 + eventType;
+        return queue + UNDERLINE + eventType;
     }
 }

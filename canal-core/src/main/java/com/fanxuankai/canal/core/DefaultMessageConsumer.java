@@ -2,7 +2,6 @@ package com.fanxuankai.canal.core;
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
-import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.core.model.MessageWrapper;
 import com.fanxuankai.canal.core.util.ConsumeEntryLogger;
@@ -18,6 +17,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
+
+import static com.fanxuankai.canal.core.constants.Constants.COLON;
 
 /**
  * Message 处理器
@@ -45,8 +46,8 @@ public class DefaultMessageConsumer implements MessageConsumer {
         this.redisTemplate = redisTemplate;
         this.entryConsumerFactory = entryConsumerFactory;
         this.threadPoolExecutor = threadPoolExecutor;
-        this.logFileOffsetTag = RedisKey.withPrefix("canal.serviceCache",
-                canalConfiguration.getId() + Constants.SEPARATOR + LOGFILE_OFFSET_SUFFIX);
+        this.logFileOffsetTag = RedisKey.withPrefix("canal" + COLON + "serviceCache",
+                canalConfiguration.getId() + COLON + LOGFILE_OFFSET_SUFFIX);
     }
 
     @Override

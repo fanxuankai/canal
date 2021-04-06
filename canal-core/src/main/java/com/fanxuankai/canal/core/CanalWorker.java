@@ -13,6 +13,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.fanxuankai.canal.core.constants.Constants.COLON;
+
 /**
  * Canal 工作者
  *
@@ -55,8 +57,8 @@ public class CanalWorker {
 
     private void tryStart() {
         CanalConfiguration canalConfiguration = canalWorkConfiguration.getCanalConfiguration();
-        String key = RedisKey.withPrefix("canal.serviceCache",
-                canalConfiguration.getId() + Constants.SEPARATOR + "CanalRunning");
+        String key = RedisKey.withPrefix("canal" + COLON + "serviceCache",
+                canalConfiguration.getId() + Constants.COLON + "CanalRunning");
         RedisTemplate<String, Object> redisTemplate = canalWorkConfiguration.getRedisTemplate();
         LOGGER.info("[" + canalConfiguration.getId() + "] " + "ping...");
         do {

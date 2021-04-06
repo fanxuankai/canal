@@ -44,7 +44,7 @@ public class SqlTypeConverter {
                                                     List<CanalEntry.Column> columns,
                                                     String schema,
                                                     String table) {
-        String key = schema + Constants.SEPARATOR + table;
+        String key = schema + Constants.DOT + table;
         Map<String, Class<?>> fieldsTypeMap = JAVA_TYPE_CACHE.get(key);
         if (fieldsTypeMap == null
                 // 字段发生了变化, 刷新缓存
