@@ -126,7 +126,9 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
                     } else if (function instanceof OneToOneDocumentFunction) {
                         return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForUpdate(before, after));
                     } else if (function instanceof ManyToOneDocumentFunction) {
-                        return ((ManyToOneDocumentFunction<Object, Object>) function).applyForUpdate(before, after);
+                        return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForUpdate(before, after));
+                    } else if (function instanceof ManyToManyDocumentFunction) {
+                        return ((ManyToManyDocumentFunction<Object, Object>) function).applyForUpdate(before, after);
                     } else if (function instanceof OneToManyDocumentFunction) {
                         UpdateByQuery updateByQuery =
                                 ((OneToManyDocumentFunction<Object, Object>) function).applyForUpdate(before, after);

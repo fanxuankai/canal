@@ -38,11 +38,13 @@ public class SimpleIndexDefinition extends AbstractIndexDefinition {
                 documentFunction = applicationContext.getBean(index.documentFunctionClass());
             } catch (Exception e) {
                 LOGGER.debug("从 ApplicationContext 获取失败", e);
-                try {
-                    documentFunction = index.documentFunctionClass().getDeclaredConstructor().newInstance();
-                } catch (Exception e1) {
-                    throw new IllegalArgumentException();
-                }
+            }
+        }
+        if (documentFunction == null) {
+            try {
+                documentFunction = index.documentFunctionClass().getDeclaredConstructor().newInstance();
+            } catch (Exception e1) {
+                throw new IllegalArgumentException();
             }
         }
         return documentFunction;

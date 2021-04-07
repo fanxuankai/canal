@@ -89,7 +89,9 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                     } else if (function instanceof OneToOneDocumentFunction) {
                         return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForDelete(t));
                     } else if (function instanceof ManyToOneDocumentFunction) {
-                        return ((ManyToOneDocumentFunction<Object, Object>) function).applyForDelete(t);
+                        return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForDelete(t));
+                    } else if (function instanceof ManyToManyDocumentFunction) {
+                        return ((ManyToManyDocumentFunction<Object, Object>) function).applyForDelete(t);
                     } else if (function instanceof OneToManyDocumentFunction) {
                         UpdateByQuery updateByQuery =
                                 ((OneToManyDocumentFunction<Object, Object>) function).applyForDelete(t);

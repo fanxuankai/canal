@@ -36,15 +36,18 @@ public class TableAttributes {
         return Optional.of(tableAttributes);
     }
 
-    @SuppressWarnings("unchecked")
     private static AnnotationAttributes fromType(Class<?> type) {
+        AnnotationAttributes annotationAttributes = fromAnnotation(type, TABLE_ANNOTATION_NAME);
+        if (annotationAttributes == null) {
+            annotationAttributes = fromAnnotation(type, MYBATIS_PLUS_TABLE_ANNOTATION_NAME);
+        }
+        return annotationAttributes;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static AnnotationAttributes fromAnnotation(Class<?> type, String annotation) {
         try {
-            Class<Annotation> tableClass = (Class<Annotation>) Class.forName(TABLE_ANNOTATION_NAME);
-            Annotation tableAnnotation = AnnotationUtils.findAnnotation(type, tableClass);
-            if (tableAnnotation != null) {
-                return AnnotationAttributes.fromMap(AnnotationUtils.getAnnotationAttributes(tableAnnotation));
-            }
-            Class<Annotation> tableNameClass = (Class<Annotation>) Class.forName(MYBATIS_PLUS_TABLE_ANNOTATION_NAME);
+            Class<Annotation> tableNameClass = (Class<Annotation>) Class.forName(annotation);
             Annotation tableNameAnnotation = AnnotationUtils.findAnnotation(type, tableNameClass);
             if (tableNameAnnotation != null) {
                 return AnnotationAttributes.fromMap(AnnotationUtils.getAnnotationAttributes(tableNameAnnotation));
