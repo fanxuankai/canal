@@ -4,16 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.core.util.CommonUtils;
 import com.fanxuankai.canal.core.util.DomainConverter;
-import com.fanxuankai.canal.elasticsearch.DocumentFunction;
-import com.fanxuankai.canal.elasticsearch.IndexDefinition;
-import com.fanxuankai.canal.elasticsearch.IndexDefinitionManager;
-import com.fanxuankai.canal.elasticsearch.MasterDocumentFunction;
+import com.fanxuankai.canal.elasticsearch.*;
 import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration;
 import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
@@ -30,7 +25,6 @@ import java.util.stream.Collectors;
  * @author fanxuankai
  */
 public class InsertConsumer extends AbstractEsConsumer<List<Object>> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InsertConsumer.class);
 
     public InsertConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                           IndexDefinitionManager indexDefinitionManager,
@@ -48,28 +42,18 @@ public class InsertConsumer extends AbstractEsConsumer<List<Object>> {
     }
 
     @Override
-    public void accept(List<Object> queries) {
-        if (CollectionUtils.isEmpty(queries)) {
+    public void accept(List<Object> objects) {
+        if (CollectionUtils.isEmpty(objects)) {
             return;
         }
-        List<IndexQuery> indexQueries = queries.stream()
+        List<IndexQuery> indexQueries = objects.stream()
                 .filter(o -> o instanceof IndexQuery)
                 .map(o -> (IndexQuery) o)
                 .collect(Collectors.toList());
         if (!indexQueries.isEmpty()) {
             elasticsearchRestTemplate.bulkIndex(indexQueries);
         }
-        List<UpdateQuery> updateQueries = queries.stream()
-                .filter(o -> o instanceof UpdateQuery)
-                .map(o -> (UpdateQuery) o)
-                .collect(Collectors.toList());
-        if (!updateQueries.isEmpty()) {
-            try {
-                elasticsearchRestTemplate.bulkUpdate(updateQueries);
-            } catch (Exception e) {
-                LOGGER.debug(e.getLocalizedMessage());
-            }
-        }
+        UpdateConsumer.update(objects, elasticsearchRestTemplate);
     }
 
     private List<Object> queries(EntryWrapper entryWrapper, IndexDefinition indexDefinition) {
@@ -78,9 +62,18 @@ public class InsertConsumer extends AbstractEsConsumer<List<Object>> {
                 .stream()
                 .map(rowData -> DomainConverter.of(CommonUtils.toJsonString(rowData.getAfterColumnsList()),
                         indexDefinition.getEntityClass()))
-                .map(t -> {
+                .map(insert -> {
                     if (function instanceof MasterDocumentFunction) {
-                        return Collections.singletonList(((MasterDocumentFunction<Object, Object>) function).applyForInsert(t));
+                        return Collections.singletonList(((MasterDocumentFunction<Object, Object>) function).applyForInsert(insert));
+                    } else if (function instanceof OneToOneDocumentFunction) {
+                        return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForInsert(insert));
+                    } else if (function instanceof OneToManyDocumentFunction) {
+                        return Collections.singletonList(new UpdateByQueryParam(indexDefinition,
+                                ((OneToManyDocumentFunction<Object, Object>) function).applyForInsert(insert)));
+                    } else if (function instanceof ManyToOneDocumentFunction) {
+                        return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForInsert(insert));
+                    } else if (function instanceof ManyToManyDocumentFunction) {
+                        return ((ManyToManyDocumentFunction<Object, Object>) function).applyForInsert(insert);
                     }
                     return Collections.emptyList();
                 })

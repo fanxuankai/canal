@@ -41,45 +41,64 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
         super(canalElasticsearchConfiguration, indexDefinitionManager, elasticsearchRestTemplate);
     }
 
-    static void updateByQuery(ElasticsearchRestTemplate template, UpdateByQueryParam updateByQueryParam) {
-        RestHighLevelClient client = template.getClient();
-        //参数为索引名，可以不指定，可以一个，可以多个
-        UpdateByQueryRequest request = new UpdateByQueryRequest(updateByQueryParam.getIndexDefinition().getIndexName());
-        // 更新时版本冲突
-        request.setConflicts("proceed");
-        // 设置查询条件，第一个参数是字段名，第二个参数是字段的值
-        request.setQuery(updateByQueryParam.getUpdateByQuery().getQueryBuilder());
-        String code = updateByQueryParam.getUpdateByQuery().getData()
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    Object value = entry.getValue();
-                    String valueString;
-                    if (value instanceof CharSequence
-                            || value instanceof Character) {
-                        valueString = "'" + value + "'";
-                    } else {
-                        valueString = String.valueOf(value);
-                    }
-                    return "ctx._source." + entry.getKey() + " = " + valueString;
-                })
-                .collect(Collectors.joining(";", "", ""));
-        request.setScript(new Script(ScriptType.INLINE, "painless",
-                code, Collections.emptyMap()));
-        // 并行
-        request.setSlices(2);
-        // 使用滚动参数来控制“搜索上下文”存活的时间
-        request.setScroll(TimeValue.timeValueMinutes(10));
-        // 可选参数
-        // 超时
-        request.setTimeout(TimeValue.timeValueMinutes(2));
-        // 刷新索引
-        request.setRefresh(true);
-        try {
-            client.updateByQuery(request, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            LOGGER.error("update by query 异常", e);
+    static void update(List<Object> objects, ElasticsearchRestTemplate template) {
+        if (CollectionUtils.isEmpty(objects)) {
+            return;
         }
+        List<UpdateQuery> updateQueries = objects.stream()
+                .filter(o -> o instanceof UpdateQuery)
+                .map(o -> (UpdateQuery) o)
+                .collect(Collectors.toList());
+        if (!updateQueries.isEmpty()) {
+            try {
+                template.bulkUpdate(updateQueries);
+            } catch (Exception e) {
+                LOGGER.debug(e.getLocalizedMessage());
+            }
+        }
+        objects.stream().filter(o -> o instanceof UpdateByQueryParam)
+                .map(o -> (UpdateByQueryParam) o)
+                .forEach(updateByQueryParam -> {
+                    RestHighLevelClient client = template.getClient();
+                    //参数为索引名，可以不指定，可以一个，可以多个
+                    UpdateByQueryRequest request =
+                            new UpdateByQueryRequest(updateByQueryParam.getIndexDefinition().getIndexName());
+                    // 更新时版本冲突
+                    request.setConflicts("proceed");
+                    // 设置查询条件，第一个参数是字段名，第二个参数是字段的值
+                    request.setQuery(updateByQueryParam.getUpdateByQuery().getQueryBuilder());
+                    String code = updateByQueryParam.getUpdateByQuery().getData()
+                            .entrySet()
+                            .stream()
+                            .map(entry -> {
+                                Object value = entry.getValue();
+                                String valueString;
+                                if (value instanceof CharSequence
+                                        || value instanceof Character) {
+                                    valueString = "'" + value + "'";
+                                } else {
+                                    valueString = String.valueOf(value);
+                                }
+                                return "ctx._source." + entry.getKey() + " = " + valueString;
+                            })
+                            .collect(Collectors.joining(";", "", ""));
+                    request.setScript(new Script(ScriptType.INLINE, "painless",
+                            code, Collections.emptyMap()));
+                    // 并行
+                    request.setSlices(2);
+                    // 使用滚动参数来控制“搜索上下文”存活的时间
+                    request.setScroll(TimeValue.timeValueMinutes(10));
+                    // 可选参数
+                    // 超时
+                    request.setTimeout(TimeValue.timeValueMinutes(2));
+                    // 刷新索引
+                    request.setRefresh(true);
+                    try {
+                        client.updateByQuery(request, RequestOptions.DEFAULT);
+                    } catch (IOException e) {
+                        LOGGER.error("update by query 异常", e);
+                    }
+                });
     }
 
     @Override
@@ -93,23 +112,7 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
 
     @Override
     public void accept(List<Object> objects) {
-        if (CollectionUtils.isEmpty(objects)) {
-            return;
-        }
-        try {
-            List<UpdateQuery> updateQueries = objects.stream().filter(o -> o instanceof UpdateQuery)
-                    .map(o -> (UpdateQuery) o)
-                    .collect(Collectors.toList());
-            if (!updateQueries.isEmpty()) {
-                elasticsearchRestTemplate.bulkUpdate(updateQueries);
-            }
-        } catch (Exception e) {
-            LOGGER.debug(e.getLocalizedMessage());
-        }
-        objects.stream().filter(o -> o instanceof UpdateByQueryParam)
-                .map(o -> (UpdateByQueryParam) o)
-                .forEach(updateByQueryParam -> UpdateConsumer.updateByQuery(elasticsearchRestTemplate,
-                        updateByQueryParam));
+        update(objects, elasticsearchRestTemplate);
     }
 
     private List<Object> queries(EntryWrapper entryWrapper, IndexDefinition indexDefinition) {
@@ -124,18 +127,14 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
                     if (function instanceof MasterDocumentFunction) {
                         return Collections.singletonList(((MasterDocumentFunction<Object, Object>) function).applyForUpdate(before, after));
                     } else if (function instanceof OneToOneDocumentFunction) {
-                        return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForUpdate(before, after));
+                        return ((OneToOneDocumentFunction<Object, Object>) function).applyForUpdate(before, after);
+                    } else if (function instanceof OneToManyDocumentFunction) {
+                        return Collections.singletonList(new UpdateByQueryParam(indexDefinition,
+                                ((OneToManyDocumentFunction<Object, Object>) function).applyForUpdate(before, after)));
                     } else if (function instanceof ManyToOneDocumentFunction) {
                         return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForUpdate(before, after));
                     } else if (function instanceof ManyToManyDocumentFunction) {
                         return ((ManyToManyDocumentFunction<Object, Object>) function).applyForUpdate(before, after);
-                    } else if (function instanceof OneToManyDocumentFunction) {
-                        UpdateByQuery updateByQuery =
-                                ((OneToManyDocumentFunction<Object, Object>) function).applyForUpdate(before, after);
-                        UpdateByQueryParam updateByQueryParam = new UpdateByQueryParam();
-                        updateByQueryParam.setUpdateByQuery(updateByQuery);
-                        updateByQueryParam.setIndexDefinition(indexDefinition);
-                        return Collections.singletonList(updateByQueryParam);
                     }
                     return Collections.emptyList();
                 })

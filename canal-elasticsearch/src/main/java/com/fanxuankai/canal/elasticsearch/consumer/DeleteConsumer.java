@@ -10,12 +10,13 @@ import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration
 import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
  * @author fanxuankai
  */
 public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteConsumer.class);
 
     public DeleteConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                           IndexDefinitionManager indexDefinitionManager,
@@ -51,25 +51,11 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
         if (CollectionUtils.isEmpty(objects)) {
             return;
         }
-        Optional.of(objects.stream().filter(o -> o instanceof UpdateQuery)
-                .map(o -> (UpdateQuery) o)
-                .collect(Collectors.toList()))
-                .filter(o -> !o.isEmpty())
-                .ifPresent(updateQueries -> {
-                    try {
-                        elasticsearchRestTemplate.bulkUpdate(updateQueries);
-                    } catch (Exception e) {
-                        LOGGER.debug(e.getLocalizedMessage());
-                    }
-                });
         objects.stream().filter(o -> o instanceof DeleteObject)
                 .map(o -> (DeleteObject) o)
                 .forEach(deleteObject -> elasticsearchRestTemplate.delete(deleteObject.getDocClass(),
                         deleteObject.getId()));
-        objects.stream().filter(o -> o instanceof UpdateByQueryParam)
-                .map(o -> (UpdateByQueryParam) o)
-                .forEach(updateByQueryParam -> UpdateConsumer.updateByQuery(elasticsearchRestTemplate,
-                        updateByQueryParam));
+        UpdateConsumer.update(objects, elasticsearchRestTemplate);
     }
 
     private List<Object> queries(EntryWrapper entryWrapper, IndexDefinition indexDefinition) {
@@ -79,26 +65,22 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                 .map(CanalEntry.RowData::getBeforeColumnsList)
                 .map(columns -> DomainConverter.of(CommonUtils.toJsonString(columns),
                         indexDefinition.getEntityClass()))
-                .map(t -> {
+                .map(delete -> {
                     if (function instanceof MasterDocumentFunction) {
-                        String id = ((MasterDocumentFunction<Object, Object>) function).applyForDelete(t);
+                        String id = ((MasterDocumentFunction<Object, Object>) function).applyForDelete(delete);
                         DeleteObject deleteObject = new DeleteObject();
                         deleteObject.setId(id);
                         deleteObject.setDocClass(indexDefinition.getDocumentClass());
                         return Collections.singletonList(deleteObject);
                     } else if (function instanceof OneToOneDocumentFunction) {
-                        return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForDelete(t));
-                    } else if (function instanceof ManyToOneDocumentFunction) {
-                        return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForDelete(t));
-                    } else if (function instanceof ManyToManyDocumentFunction) {
-                        return ((ManyToManyDocumentFunction<Object, Object>) function).applyForDelete(t);
+                        return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForDelete(delete));
                     } else if (function instanceof OneToManyDocumentFunction) {
-                        UpdateByQuery updateByQuery =
-                                ((OneToManyDocumentFunction<Object, Object>) function).applyForDelete(t);
-                        UpdateByQueryParam updateByQueryParam = new UpdateByQueryParam();
-                        updateByQueryParam.setUpdateByQuery(updateByQuery);
-                        updateByQueryParam.setIndexDefinition(indexDefinition);
-                        return Collections.singletonList(updateByQueryParam);
+                        return Collections.singletonList(new UpdateByQueryParam(indexDefinition,
+                                ((OneToManyDocumentFunction<Object, Object>) function).applyForDelete(delete)));
+                    } else if (function instanceof ManyToOneDocumentFunction) {
+                        return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForDelete(delete));
+                    } else if (function instanceof ManyToManyDocumentFunction) {
+                        return ((ManyToManyDocumentFunction<Object, Object>) function).applyForDelete(delete);
                     }
                     return Collections.emptyList();
                 })

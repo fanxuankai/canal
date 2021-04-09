@@ -5,6 +5,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import java.util.Map;
 
 /**
+ * 适用于 OneToMany, 用于批量修改数据, 非 OneToMany 不建议使用该方式
+ *
  * @author fanxuankai
  */
 public class UpdateByQuery {
