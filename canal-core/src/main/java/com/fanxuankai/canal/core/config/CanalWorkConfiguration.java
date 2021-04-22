@@ -4,7 +4,7 @@ import com.fanxuankai.canal.core.ConsumerConfigFactory;
 import com.fanxuankai.canal.core.EntryConsumerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author fanxuankai
@@ -14,7 +14,7 @@ public class CanalWorkConfiguration {
     private ConsumerConfigFactory consumerConfigFactory;
     private EntryConsumerFactory entryConsumerFactory;
     private RedisTemplate<String, Object> redisTemplate;
-    private ThreadPoolExecutor threadPoolExecutor;
+    private ExecutorService executorService;
 
     public CanalConfiguration getCanalConfiguration() {
         return canalConfiguration;
@@ -48,11 +48,11 @@ public class CanalWorkConfiguration {
         this.redisTemplate = redisTemplate;
     }
 
-    public ThreadPoolExecutor getThreadPoolExecutor() {
-        return threadPoolExecutor;
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 
-    public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
-        this.threadPoolExecutor = threadPoolExecutor;
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 }

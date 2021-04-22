@@ -2,13 +2,13 @@ package com.fanxuankai.canal.core;
 
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.model.MessageWrapper;
-import com.fanxuankai.commons.util.concurrent.Flow;
-import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
+import com.fanxuankai.commons.core.util.concurrent.Flow;
+import com.fanxuankai.commons.core.util.concurrent.SubmissionPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 处理订阅者
@@ -24,8 +24,8 @@ public class HandleSubscriber extends SubmissionPublisher<MessageWrapper>
     private Flow.Subscription subscription;
 
     public HandleSubscriber(Otter otter, CanalConfiguration canalConfiguration, MessageConsumer messageConsumer,
-                            ThreadPoolExecutor threadPoolExecutor) {
-        super(threadPoolExecutor, Flow.defaultBufferSize());
+                            ExecutorService executorService) {
+        super(executorService, Flow.defaultBufferSize());
         this.otter = otter;
         this.canalConfiguration = canalConfiguration;
         this.messageConsumer = messageConsumer;

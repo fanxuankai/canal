@@ -3,12 +3,12 @@ package com.fanxuankai.canal.core;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.model.MessageWrapper;
 import com.fanxuankai.canal.core.util.MessageUtils;
-import com.fanxuankai.commons.util.concurrent.Flow;
-import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
+import com.fanxuankai.commons.core.util.concurrent.Flow;
+import com.fanxuankai.commons.core.util.concurrent.SubmissionPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 过滤订阅者
@@ -30,8 +30,8 @@ public class FilterSubscriber extends SubmissionPublisher<MessageWrapper>
                             CanalConfiguration canalConfiguration,
                             ConsumerConfigFactory consumerConfigFactory,
                             EntryConsumerFactory entryConsumerFactory,
-                            ThreadPoolExecutor threadPoolExecutor) {
-        super(threadPoolExecutor, Flow.defaultBufferSize());
+                            ExecutorService executorService) {
+        super(executorService, Flow.defaultBufferSize());
         this.otter = otter;
         this.canalConfiguration = canalConfiguration;
         this.consumerConfigFactory = consumerConfigFactory;

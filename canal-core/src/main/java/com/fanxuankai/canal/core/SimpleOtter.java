@@ -26,7 +26,7 @@ public class SimpleOtter extends AbstractOtter {
         this.messageConsumer = new DefaultMessageConsumer(canalConfiguration,
                 canalWorkConfiguration.getRedisTemplate(),
                 canalWorkConfiguration.getEntryConsumerFactory(),
-                canalWorkConfiguration.getThreadPoolExecutor());
+                canalWorkConfiguration.getExecutorService());
     }
 
     @Override

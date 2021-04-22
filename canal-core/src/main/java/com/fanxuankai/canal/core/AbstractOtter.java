@@ -1,12 +1,12 @@
 package com.fanxuankai.canal.core;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.protocol.exception.CanalClientException;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.util.CanalConnectorHelper;
-import com.fanxuankai.commons.util.concurrent.Threads;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -81,7 +81,7 @@ public abstract class AbstractOtter implements Otter {
                     }
                     onMessage(message);
                 }
-                Threads.sleep(canalConfiguration.getIntervalMillis(), TimeUnit.MILLISECONDS);
+                ThreadUtil.sleep(canalConfiguration.getIntervalMillis(), TimeUnit.MILLISECONDS);
             } catch (CanalClientException e) {
                 LOGGER.error(canalConfiguration.getId(), e);
                 canalConnectorHelper.reconnect();

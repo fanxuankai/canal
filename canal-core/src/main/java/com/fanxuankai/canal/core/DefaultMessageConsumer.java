@@ -14,8 +14,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static com.fanxuankai.canal.core.constants.Constants.COLON;
@@ -34,18 +34,18 @@ public class DefaultMessageConsumer implements MessageConsumer {
     private final CanalConfiguration canalConfiguration;
     private final RedisTemplate<String, Object> redisTemplate;
     private final EntryConsumerFactory entryConsumerFactory;
-    private final ThreadPoolExecutor threadPoolExecutor;
+    private final ExecutorService executorService;
     /**
      * logfile offset 消费标记
      */
     private final String logFileOffsetTag;
 
     public DefaultMessageConsumer(CanalConfiguration canalConfiguration, RedisTemplate<String, Object> redisTemplate,
-                                  EntryConsumerFactory entryConsumerFactory, ThreadPoolExecutor threadPoolExecutor) {
+                                  EntryConsumerFactory entryConsumerFactory, ExecutorService executorService) {
         this.canalConfiguration = canalConfiguration;
         this.redisTemplate = redisTemplate;
         this.entryConsumerFactory = entryConsumerFactory;
-        this.threadPoolExecutor = threadPoolExecutor;
+        this.executorService = executorService;
         this.logFileOffsetTag = RedisKey.withPrefix("canal" + COLON + "serviceCache",
                 canalConfiguration.getId() + COLON + LOGFILE_OFFSET_SUFFIX);
     }
@@ -97,7 +97,7 @@ public class DefaultMessageConsumer implements MessageConsumer {
     private void doHandlePerformance(MessageWrapper messageWrapper) throws ExecutionException, InterruptedException {
         // 异步处理
         List<Future<EntryWrapperProcess>> futureList = messageWrapper.getEntryWrapperList().stream()
-                .map(entryWrapper -> threadPoolExecutor.submit(() -> {
+                .map(entryWrapper -> executorService.submit(() -> {
                     EntryConsumer<?> consumer = entryConsumerFactory.find(entryWrapper.getEventType()).orElse(null);
                     if (consumer == null || existsLogfileOffset(entryWrapper, messageWrapper.getBatchId())) {
                         return new EntryWrapperProcess(entryWrapper, null, null);

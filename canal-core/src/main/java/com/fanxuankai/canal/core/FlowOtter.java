@@ -3,12 +3,12 @@ package com.fanxuankai.canal.core;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.protocol.exception.CanalClientException;
 import com.fanxuankai.canal.core.config.CanalWorkConfiguration;
-import com.fanxuankai.commons.util.concurrent.Flow;
-import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
+import com.fanxuankai.commons.core.util.concurrent.Flow;
+import com.fanxuankai.commons.core.util.concurrent.SubmissionPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Otter 并行流客户端
@@ -21,18 +21,18 @@ public class FlowOtter extends AbstractOtter {
 
     public FlowOtter(CanalWorkConfiguration canalWorkConfiguration) {
         super(canalWorkConfiguration.getCanalConfiguration());
-        ThreadPoolExecutor threadPoolExecutor = canalWorkConfiguration.getThreadPoolExecutor();
-        publisher = new SubmissionPublisher<>(threadPoolExecutor, Flow.defaultBufferSize());
+        ExecutorService executorService = canalWorkConfiguration.getExecutorService();
+        publisher = new SubmissionPublisher<>(executorService, Flow.defaultBufferSize());
         EntryConsumerFactory entryConsumerFactory = canalWorkConfiguration.getEntryConsumerFactory();
         MessageConsumer messageConsumer = new DefaultMessageConsumer(canalConfiguration,
-                canalWorkConfiguration.getRedisTemplate(), entryConsumerFactory, threadPoolExecutor);
+                canalWorkConfiguration.getRedisTemplate(), entryConsumerFactory, executorService);
         ConsumerConfigFactory consumerConfigFactory = canalWorkConfiguration.getConsumerConfigFactory();
         ConvertProcessor convertProcessor = new ConvertProcessor(this, canalConfiguration, consumerConfigFactory,
-                threadPoolExecutor);
+                executorService);
         FilterSubscriber filterSubscriber = new FilterSubscriber(this, canalConfiguration, consumerConfigFactory,
-                entryConsumerFactory, threadPoolExecutor);
+                entryConsumerFactory, executorService);
         HandleSubscriber handleSubscriber = new HandleSubscriber(this, canalConfiguration, messageConsumer,
-                threadPoolExecutor);
+                executorService);
         ConfirmSubscriber confirmSubscriber = new ConfirmSubscriber(this, canalConfiguration);
         publisher.subscribe(convertProcessor);
         convertProcessor.subscribe(filterSubscriber);

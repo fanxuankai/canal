@@ -1,9 +1,9 @@
 package com.fanxuankai.canal.db.core.consumer;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.fanxuankai.canal.core.EntryConsumer;
 import com.fanxuankai.canal.db.core.config.CanalDbConfiguration;
 import com.fanxuankai.canal.db.core.util.SqlUtils;
-import com.fanxuankai.commons.util.ThrowableUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.CollectionUtils;
@@ -25,6 +25,7 @@ public abstract class AbstractDbConsumer implements EntryConsumer<List<String>> 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void accept(List<String> batchSql) {
         try {
             if (CollectionUtils.isEmpty(batchSql)) {
@@ -36,7 +37,7 @@ public abstract class AbstractDbConsumer implements EntryConsumer<List<String>> 
             }
             SqlUtils.executeBatch(Objects.requireNonNull(jdbcTemplate.getDataSource()), batchSql);
         } catch (Throwable throwable) {
-            ThrowableUtils.checkException(throwable, DuplicateKeyException.class,
+            ExceptionUtil.isCausedBy(throwable, DuplicateKeyException.class,
                     SQLIntegrityConstraintViolationException.class);
         }
     }

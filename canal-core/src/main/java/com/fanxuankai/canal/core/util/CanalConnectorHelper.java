@@ -1,9 +1,9 @@
 package com.fanxuankai.canal.core.util;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.protocol.exception.CanalClientException;
-import com.fanxuankai.commons.util.concurrent.Threads;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -70,7 +70,7 @@ public class CanalConnectorHelper implements InitializingBean {
                     return;
                 }
                 LOGGER.error(destination, e);
-                Threads.sleep(2, TimeUnit.SECONDS);
+                ThreadUtil.sleep(2, TimeUnit.SECONDS);
             }
         }
     }

@@ -1,8 +1,8 @@
 package com.fanxuankai.canal.clickhouse.consumer;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.fanxuankai.canal.core.EntryConsumer;
 import com.fanxuankai.canal.db.core.config.CanalDbConfiguration;
-import com.fanxuankai.commons.util.ThrowableUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -22,11 +22,12 @@ public abstract class AbstractClickhouseConsumer implements EntryConsumer<List<S
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void accept(List<String> sqlList) {
         try {
             sqlList.forEach(jdbcTemplate::execute);
         } catch (Throwable throwable) {
-            ThrowableUtils.checkException(throwable, DuplicateKeyException.class,
+            ExceptionUtil.isCausedBy(throwable, DuplicateKeyException.class,
                     SQLIntegrityConstraintViolationException.class);
         }
     }
