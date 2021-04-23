@@ -6,6 +6,7 @@ import com.fanxuankai.canal.core.config.ConsumerConfigSupplier;
 import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.elasticsearch.IndexDefinitionManager;
 import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 
@@ -22,13 +23,16 @@ public abstract class AbstractEsConsumer<R> implements EntryConsumer<R>, Consume
     protected CanalElasticsearchConfiguration canalElasticsearchConfiguration;
     protected IndexDefinitionManager indexDefinitionManager;
     protected ElasticsearchRestTemplate elasticsearchRestTemplate;
+    protected RestHighLevelClient restHighLevelClient;
 
     public AbstractEsConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                               IndexDefinitionManager indexDefinitionManager,
-                              ElasticsearchRestTemplate elasticsearchRestTemplate) {
+                              ElasticsearchRestTemplate elasticsearchRestTemplate,
+                              RestHighLevelClient restHighLevelClient) {
         this.canalElasticsearchConfiguration = canalElasticsearchConfiguration;
         this.indexDefinitionManager = indexDefinitionManager;
         this.elasticsearchRestTemplate = elasticsearchRestTemplate;
+        this.restHighLevelClient = restHighLevelClient;
     }
 
     @Override

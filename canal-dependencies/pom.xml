@@ -27,14 +27,14 @@
         <url>https://github.com/fanxuankai/canal</url>
     </scm>
     <properties>
-        <revision>2.0.0-SNAPSHOT</revision>
+        <revision>3.0.0-SNAPSHOT</revision>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
         <canal.client.version>1.1.4</canal.client.version>
         <fanxuankai-commons.version>1.1.0-SNAPSHOT</fanxuankai-commons.version>
-        <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
+        <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
         <rocketmq-spring-boot.version>2.2.0</rocketmq-spring-boot.version>
         <aviator.version>4.2.10</aviator.version>
         <javassist.version>3.27.0-GA</javassist.version>

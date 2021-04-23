@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @author fanxuankai
  */
 @CanalTable(schema = "canal_client_example", name = "t_user")
-@Document(indexName = "canal_client_example.user_info", type = "doc")
+@Document(indexName = "canal_client_example.user_info")
 @Indexes({
         @Index(documentClass = User.class, documentFunctionClass = User.class)
 })
