@@ -10,6 +10,7 @@ import com.fanxuankai.canal.redis.config.CanalRedisConfiguration;
 import com.fanxuankai.canal.redis.consumer.DeleteConsumer;
 import com.fanxuankai.canal.redis.consumer.EraseConsumer;
 import com.fanxuankai.canal.redis.consumer.InsertOrUpdateConsumer;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.lang.Nullable;
 
@@ -19,7 +20,6 @@ import java.util.Optional;
  * @author fanxuankai
  */
 public class CanalRedisWorker extends CanalWorker {
-
     public CanalRedisWorker(CanalWorkConfiguration canalWorkConfiguration) {
         super(canalWorkConfiguration);
     }
@@ -34,13 +34,15 @@ public class CanalRedisWorker extends CanalWorker {
                 consumerConfigMap.forEach((table, consumerConfig) ->
                         consumerConfigFactory.put(schema, table, consumerConfig)));
         EntryConsumerFactory entryConsumerFactory = new EntryConsumerFactory();
+        RedisConnectionFactory redisConnectionFactory = redisTemplate.getRequiredConnectionFactory();
         InsertOrUpdateConsumer insertOrUpdateConsumer =
-                new InsertOrUpdateConsumer(canalRedisConfiguration, redisTemplate);
+                new InsertOrUpdateConsumer(canalRedisConfiguration, redisConnectionFactory);
         entryConsumerFactory.put(CanalEntry.EventType.INSERT, insertOrUpdateConsumer);
         entryConsumerFactory.put(CanalEntry.EventType.UPDATE, insertOrUpdateConsumer);
         entryConsumerFactory.put(CanalEntry.EventType.DELETE, new DeleteConsumer(canalRedisConfiguration,
-                redisTemplate));
-        entryConsumerFactory.put(CanalEntry.EventType.ERASE, new EraseConsumer(canalRedisConfiguration, redisTemplate));
+                redisConnectionFactory));
+        entryConsumerFactory.put(CanalEntry.EventType.ERASE, new EraseConsumer(canalRedisConfiguration,
+                redisConnectionFactory));
         CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
         canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
         canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);
@@ -48,5 +50,4 @@ public class CanalRedisWorker extends CanalWorker {
         canalWorkConfiguration.setRedisTemplate(redisTemplate);
         return new CanalRedisWorker(canalWorkConfiguration);
     }
-
 }

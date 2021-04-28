@@ -6,6 +6,8 @@ import com.fanxuankai.canal.core.config.ConsumerConfigSupplier;
 import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.core.util.RedisKey;
 import com.fanxuankai.canal.redis.config.CanalRedisConfiguration;
+import com.fanxuankai.canal.redis.util.RedisTemplates;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 
@@ -20,9 +22,9 @@ public abstract class AbstractRedisConsumer<R> implements EntryConsumer<R>, Cons
     protected RedisTemplate<String, Object> redisTemplate;
 
     public AbstractRedisConsumer(CanalRedisConfiguration canalRedisConfiguration,
-                                 RedisTemplate<String, Object> redisTemplate) {
+                                 RedisConnectionFactory redisConnectionFactory) {
         this.canalRedisConfiguration = canalRedisConfiguration;
-        this.redisTemplate = redisTemplate;
+        this.redisTemplate = RedisTemplates.newRedisTemplate(redisConnectionFactory);
     }
 
     @Override

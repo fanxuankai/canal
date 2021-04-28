@@ -34,7 +34,7 @@ public class CanalKafkaDemo {
         CanalWorker canalWorker = CanalKafkaWorker.newCanalWorker(canalConfiguration, new CanalMqConfiguration(),
                 kafkaTemplate);
         canalWorker.getCanalWorkConfiguration()
-                .setRedisTemplate(RedisTemplates.newRedisTemplate());
+                .setRedisTemplate(RedisTemplateUtils.newRedisTemplate());
         canalWorker.start();
 
         // test consumer

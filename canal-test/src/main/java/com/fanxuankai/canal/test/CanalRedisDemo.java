@@ -23,7 +23,7 @@ public class CanalRedisDemo {
         mergeEntry.setMerge(true);
         canalConfiguration.setMergeEntry(mergeEntry);
         CanalRedisWorker.newCanalWorker(canalConfiguration, new CanalRedisConfiguration(),
-                RedisTemplates.newRedisTemplate())
+                RedisTemplateUtils.newRedisTemplate())
                 .start();
     }
 }

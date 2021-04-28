@@ -2,7 +2,7 @@ package com.fanxuankai.canal.redis.consumer;
 
 import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.redis.config.CanalRedisConfiguration;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
@@ -15,8 +15,9 @@ import java.util.Collections;
  */
 public class EraseConsumer extends AbstractRedisConsumer<Collection<String>> {
 
-    public EraseConsumer(CanalRedisConfiguration canalRedisConfiguration, RedisTemplate<String, Object> redisTemplate) {
-        super(canalRedisConfiguration, redisTemplate);
+    public EraseConsumer(CanalRedisConfiguration canalRedisConfiguration,
+                         RedisConnectionFactory redisConnectionFactory) {
+        super(canalRedisConfiguration, redisConnectionFactory);
     }
 
     @Override

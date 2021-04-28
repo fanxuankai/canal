@@ -31,7 +31,7 @@ public class CanalRocketMqDemo {
         CanalWorker canalWorker = CanalRocketMqWorker.newCanalWorker(canalConfiguration,
                 new CanalMqConfiguration(), rocketMqTemplate);
         canalWorker.getCanalWorkConfiguration()
-                .setRedisTemplate(RedisTemplates.newRedisTemplate());
+                .setRedisTemplate(RedisTemplateUtils.newRedisTemplate());
         canalWorker.start();
 
         // test consumer
