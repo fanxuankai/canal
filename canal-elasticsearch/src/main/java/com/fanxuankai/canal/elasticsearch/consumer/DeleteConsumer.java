@@ -13,10 +13,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -75,8 +72,9 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                     } else if (function instanceof OneToOneDocumentFunction) {
                         return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForDelete(delete));
                     } else if (function instanceof OneToManyDocumentFunction) {
-                        return Collections.singletonList(new UpdateByQueryParam(indexDefinition,
-                                ((OneToManyDocumentFunction<Object, Object>) function).applyForDelete(delete)));
+                        return Optional.ofNullable(((OneToManyDocumentFunction<Object, Object>) function).applyForDelete(delete))
+                                .map(o -> Collections.singletonList(new UpdateByQueryParam(indexDefinition, o)))
+                                .orElse(Collections.emptyList());
                     } else if (function instanceof ManyToOneDocumentFunction) {
                         return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForDelete(delete));
                     } else if (function instanceof ManyToManyDocumentFunction) {
