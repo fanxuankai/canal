@@ -85,6 +85,9 @@ public class InsertConsumer extends AbstractEsConsumer<List<Object>> {
                         query.setObject(o);
                         return query;
                     }
+                    if (o instanceof UpdateByQueryParam) {
+                        return o;
+                    }
                     UpdateQuery query = new UpdateQuery();
                     query.setId(getId(o));
                     query.setClazz(o.getClass());
