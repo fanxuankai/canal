@@ -87,7 +87,7 @@ public abstract class AbstractOtter implements Otter {
                 canalConnectorHelper.reconnect();
             } catch (Exception e) {
                 running = false;
-                LOGGER.info("[" + canalConfiguration.getId() + "] " + "Stop get data", e);
+                LOGGER.error("[" + canalConfiguration.getId() + "] " + "Stop get data", e);
             }
         }
     }
