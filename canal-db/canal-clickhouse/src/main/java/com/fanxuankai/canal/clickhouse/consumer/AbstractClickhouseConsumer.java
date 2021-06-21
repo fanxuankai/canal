@@ -27,8 +27,10 @@ public abstract class AbstractClickhouseConsumer implements EntryConsumer<List<S
         try {
             sqlList.forEach(jdbcTemplate::execute);
         } catch (Throwable throwable) {
-            ExceptionUtil.isCausedBy(throwable, DuplicateKeyException.class,
-                    SQLIntegrityConstraintViolationException.class);
+            if (!ExceptionUtil.isCausedBy(throwable, DuplicateKeyException.class,
+                    SQLIntegrityConstraintViolationException.class)) {
+                throw new RuntimeException(throwable);
+            }
         }
     }
 }

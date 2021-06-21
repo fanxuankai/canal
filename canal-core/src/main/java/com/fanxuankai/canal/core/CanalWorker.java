@@ -5,7 +5,7 @@ import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.config.CanalWorkConfiguration;
 import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.core.util.RedisKey;
-import com.fanxuankai.commons.core.util.concurrent.ThreadPool;
+import com.fanxuankai.commons.util.concurrent.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;

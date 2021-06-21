@@ -2,8 +2,8 @@ package com.fanxuankai.canal.core;
 
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.model.MessageWrapper;
-import com.fanxuankai.commons.core.util.concurrent.Flow;
-import com.fanxuankai.commons.core.util.concurrent.SubmissionPublisher;
+import com.fanxuankai.commons.util.concurrent.Flow;
+import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
