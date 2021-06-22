@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fanxuankai.canal</groupId>
     <artifactId>canal-dependencies</artifactId>
-    <version>${revision}</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Canal Dependencies</name>
     <description>Canal Dependencies</description>
@@ -27,7 +27,6 @@
         <url>https://github.com/fanxuankai/canal</url>
     </scm>
     <properties>
-        <revision>2.0.0-SNAPSHOT</revision>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
