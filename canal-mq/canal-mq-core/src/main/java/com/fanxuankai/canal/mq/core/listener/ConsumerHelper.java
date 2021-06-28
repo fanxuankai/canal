@@ -1,6 +1,6 @@
 package com.fanxuankai.canal.mq.core.listener;
 
-import com.fanxuankai.canal.core.constants.Constants;
+import cn.hutool.core.text.StrPool;
 import com.fanxuankai.canal.core.util.DomainConverter;
 import com.fanxuankai.canal.core.util.Pair;
 import com.fanxuankai.canal.core.util.Topic;
@@ -42,7 +42,7 @@ public class ConsumerHelper {
     }
 
     public void consume(String group, String topic, String msg) {
-        int i = topic.lastIndexOf(Constants.UNDERLINE);
+        int i = topic.lastIndexOf(StrPool.UNDERLINE);
         String rawTopic = topic.substring(0, i);
         EventType eventType = valueOf(topic.substring(i + 1));
         CanalListenerDefinition definition = Optional.ofNullable(group)

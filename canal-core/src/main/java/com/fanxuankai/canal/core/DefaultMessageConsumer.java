@@ -1,5 +1,6 @@
 package com.fanxuankai.canal.core;
 
+import cn.hutool.core.text.StrPool;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.model.EntryWrapper;
@@ -17,8 +18,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
-import static com.fanxuankai.canal.core.constants.Constants.COLON;
 
 /**
  * Message 处理器
@@ -46,8 +45,8 @@ public class DefaultMessageConsumer implements MessageConsumer {
         this.redisTemplate = redisTemplate;
         this.entryConsumerFactory = entryConsumerFactory;
         this.executorService = executorService;
-        this.logFileOffsetTag = RedisKey.withPrefix("canal" + COLON + "serviceCache",
-                canalConfiguration.getId() + COLON + LOGFILE_OFFSET_SUFFIX);
+        this.logFileOffsetTag = RedisKey.withPrefix("canal" + StrPool.COLON + "serviceCache",
+                canalConfiguration.getId() + StrPool.COLON + LOGFILE_OFFSET_SUFFIX);
     }
 
     @Override

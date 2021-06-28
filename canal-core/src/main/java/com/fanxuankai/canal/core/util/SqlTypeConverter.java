@@ -1,8 +1,8 @@
 package com.fanxuankai.canal.core.util;
 
+import cn.hutool.core.text.StrPool;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.fanxuankai.canal.core.config.ConsumerConfig;
-import com.fanxuankai.canal.core.constants.Constants;
 import com.mysql.cj.MysqlType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class SqlTypeConverter {
                                                     List<CanalEntry.Column> columns,
                                                     String schema,
                                                     String table) {
-        String key = schema + Constants.DOT + table;
+        String key = schema + StrPool.DOT + table;
         Map<String, Class<?>> fieldsTypeMap = JAVA_TYPE_CACHE.get(key);
         if (fieldsTypeMap == null
                 // 字段发生了变化, 刷新缓存
