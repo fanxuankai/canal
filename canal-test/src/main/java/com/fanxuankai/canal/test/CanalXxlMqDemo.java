@@ -26,7 +26,7 @@ public class CanalXxlMqDemo {
         canalConfiguration.setShowEntryLog(true);
         canalConfiguration.setBatchSize(10000);
         CanalWorker canalWorker = CanalXxlMqWorker.newCanalWorker(canalConfiguration, new CanalMqConfiguration());
-        canalWorker.getCanalWorkConfiguration().setRedisTemplate(RedisTemplates.newRedisTemplate());
+        canalWorker.getCanalWorkConfiguration().setRedisTemplate(RedisTemplateUtils.newRedisTemplate());
         canalWorker.start();
 
         // test consumer

@@ -1,19 +1,17 @@
 package com.fanxuankai.canal.core;
 
+import cn.hutool.core.text.StrPool;
 import cn.hutool.core.thread.ThreadUtil;
 import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.core.config.CanalWorkConfiguration;
-import com.fanxuankai.canal.core.constants.Constants;
 import com.fanxuankai.canal.core.util.RedisKey;
-import com.fanxuankai.commons.core.util.concurrent.ThreadPool;
+import com.fanxuankai.commons.util.concurrent.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-
-import static com.fanxuankai.canal.core.constants.Constants.COLON;
 
 /**
  * Canal 工作者
@@ -57,8 +55,8 @@ public class CanalWorker {
 
     private void tryStart() {
         CanalConfiguration canalConfiguration = canalWorkConfiguration.getCanalConfiguration();
-        String key = RedisKey.withPrefix("canal" + COLON + "serviceCache",
-                canalConfiguration.getId() + Constants.COLON + "CanalRunning");
+        String key = RedisKey.withPrefix("canal" + StrPool.COLON + "serviceCache",
+                canalConfiguration.getId() + StrPool.COLON + "CanalRunning");
         RedisTemplate<String, Object> redisTemplate = canalWorkConfiguration.getRedisTemplate();
         LOGGER.info("[" + canalConfiguration.getId() + "] " + "ping...");
         do {

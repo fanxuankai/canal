@@ -6,8 +6,7 @@
     <parent>
         <groupId>com.fanxuankai.canal</groupId>
         <artifactId>canal-parent</artifactId>
-        <version>${revision}</version>
-        <relativePath>../canal-parent</relativePath>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>canal-db</artifactId>
     <packaging>pom</packaging>

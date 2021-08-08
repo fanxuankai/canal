@@ -28,7 +28,7 @@ public class CanalElasticsearchDemo {
                 null, indexDefinitionManager,
                 new ElasticsearchRestTemplate(RestClients.create(ClientConfiguration.localhost()).rest()));
         canalWorker.getCanalWorkConfiguration()
-                .setRedisTemplate(RedisTemplates.newRedisTemplate());
+                .setRedisTemplate(RedisTemplateUtils.newRedisTemplate());
         canalWorker.start();
     }
 }

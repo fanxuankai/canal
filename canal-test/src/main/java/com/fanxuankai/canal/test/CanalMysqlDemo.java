@@ -50,7 +50,7 @@ public class CanalMysqlDemo {
         CanalWorker canalWorker = CanalMySqlWorker.newCanalWorker(canalConfiguration, canalDbConfiguration,
                 new JdbcTemplate(dataSource));
         canalWorker.getCanalWorkConfiguration()
-                .setRedisTemplate(RedisTemplates.newRedisTemplate());
+                .setRedisTemplate(RedisTemplateUtils.newRedisTemplate());
         canalWorker.start();
     }
 }

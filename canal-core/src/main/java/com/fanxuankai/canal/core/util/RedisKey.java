@@ -1,10 +1,10 @@
 package com.fanxuankai.canal.core.util;
 
+import cn.hutool.core.text.StrPool;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.fanxuankai.canal.core.constants.Constants.COLON;
 
 /**
  * Redis 工具类
@@ -16,7 +16,7 @@ public class RedisKey {
     /**
      * 前缀
      */
-    protected static final String PREFIX = "canal" + COLON + "canalDbCache";
+    protected static final String PREFIX = "canal" + StrPool.COLON + "canalDbCache";
 
     /**
      * 生成 key
@@ -38,9 +38,9 @@ public class RedisKey {
      * @return 生成默认的 key
      */
     public static String of(String schema, String table, String suffix) {
-        String key = PREFIX + COLON + schema + COLON + table;
+        String key = PREFIX + StrPool.COLON + schema + StrPool.COLON + table;
         if (suffix != null && !schema.isEmpty()) {
-            return key + COLON + suffix;
+            return key + StrPool.COLON + suffix;
         }
         return key;
     }
@@ -53,7 +53,7 @@ public class RedisKey {
      * @return 生成自定义的 key
      */
     public static String withSuffix(String key, String suffix) {
-        return key + COLON + suffix;
+        return key + StrPool.COLON + suffix;
     }
 
     /**
@@ -64,7 +64,7 @@ public class RedisKey {
      * @return 生成自定义的 key
      */
     public static String withPrefix(String prefix, String custom) {
-        return prefix + COLON + custom;
+        return prefix + StrPool.COLON + custom;
     }
 
     /**
@@ -74,7 +74,7 @@ public class RedisKey {
      * @return column0:column1:column2
      */
     public static String suffix(List<String> columnList) {
-        return String.join(COLON, columnList);
+        return String.join(StrPool.COLON, columnList);
     }
 
     /**
@@ -88,6 +88,6 @@ public class RedisKey {
         return columnList.stream()
                 .map(columnMap::get)
                 .map(s -> "(" + s + ")")
-                .collect(Collectors.joining(COLON));
+                .collect(Collectors.joining(StrPool.COLON));
     }
 }

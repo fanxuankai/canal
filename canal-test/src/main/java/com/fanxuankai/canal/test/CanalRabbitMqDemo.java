@@ -35,7 +35,7 @@ public class CanalRabbitMqDemo {
         CanalWorker canalWorker = CanalRabbitMqWorker.newCanalWorker(canalConfiguration, new CanalMqConfiguration(),
                 rabbitTemplate, amqpAdmin);
         canalWorker.getCanalWorkConfiguration()
-                .setRedisTemplate(RedisTemplates.newRedisTemplate());
+                .setRedisTemplate(RedisTemplateUtils.newRedisTemplate());
         canalWorker.start();
 
         // test consumer

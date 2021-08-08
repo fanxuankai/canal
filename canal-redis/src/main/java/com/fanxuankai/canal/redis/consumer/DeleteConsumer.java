@@ -7,8 +7,8 @@ import com.fanxuankai.canal.core.util.SqlTypeConverter;
 import com.fanxuankai.canal.redis.config.CanalRedisConfiguration;
 import com.google.common.collect.Maps;
 import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -23,8 +23,8 @@ import java.util.Map;
 public class DeleteConsumer extends AbstractRedisConsumer<Map<String, List<String>>> {
 
     public DeleteConsumer(CanalRedisConfiguration canalRedisConfiguration,
-                          RedisTemplate<String, Object> redisTemplate) {
-        super(canalRedisConfiguration, redisTemplate);
+                          RedisConnectionFactory redisConnectionFactory) {
+        super(canalRedisConfiguration, redisConnectionFactory);
     }
 
     @Override

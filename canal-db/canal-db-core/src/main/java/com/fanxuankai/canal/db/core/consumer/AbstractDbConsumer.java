@@ -37,8 +37,10 @@ public abstract class AbstractDbConsumer implements EntryConsumer<List<String>> 
             }
             SqlUtils.executeBatch(Objects.requireNonNull(jdbcTemplate.getDataSource()), batchSql);
         } catch (Throwable throwable) {
-            ExceptionUtil.isCausedBy(throwable, DuplicateKeyException.class,
-                    SQLIntegrityConstraintViolationException.class);
+            if (!ExceptionUtil.isCausedBy(throwable, DuplicateKeyException.class,
+                    SQLIntegrityConstraintViolationException.class)) {
+                throw new RuntimeException(throwable);
+            }
         }
     }
 
