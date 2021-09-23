@@ -11,6 +11,7 @@ import com.fanxuankai.canal.elasticsearch.consumer.DeleteConsumer;
 import com.fanxuankai.canal.elasticsearch.consumer.EraseConsumer;
 import com.fanxuankai.canal.elasticsearch.consumer.InsertConsumer;
 import com.fanxuankai.canal.elasticsearch.consumer.UpdateConsumer;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.lang.Nullable;
 
@@ -28,7 +29,8 @@ public class CanalElasticsearchWorker extends CanalWorker {
     public static CanalElasticsearchWorker newCanalWorker(CanalConfiguration canalConfiguration,
                                                           @Nullable CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                                                           IndexDefinitionManager indexDefinitionManager,
-                                                          ElasticsearchRestTemplate elasticsearchRestTemplate) {
+                                                          ElasticsearchRestTemplate elasticsearchRestTemplate,
+                                                          RestHighLevelClient restHighLevelClient) {
         ConsumerConfigFactory consumerConfigFactory = new ConsumerConfigFactory();
         canalElasticsearchConfiguration = Optional.ofNullable(canalElasticsearchConfiguration)
                 .orElse(new CanalElasticsearchConfiguration());
@@ -37,13 +39,13 @@ public class CanalElasticsearchWorker extends CanalWorker {
                         consumerConfigFactory.put(schema, table, redisConsumerConfig)));
         EntryConsumerFactory entryConsumerFactory = new EntryConsumerFactory();
         entryConsumerFactory.put(EventType.INSERT, new InsertConsumer(canalElasticsearchConfiguration,
-                indexDefinitionManager, elasticsearchRestTemplate));
+                indexDefinitionManager, elasticsearchRestTemplate, restHighLevelClient));
         entryConsumerFactory.put(EventType.UPDATE, new UpdateConsumer(canalElasticsearchConfiguration,
-                indexDefinitionManager, elasticsearchRestTemplate));
+                indexDefinitionManager, elasticsearchRestTemplate, restHighLevelClient));
         entryConsumerFactory.put(EventType.DELETE, new DeleteConsumer(canalElasticsearchConfiguration,
-                indexDefinitionManager, elasticsearchRestTemplate));
+                indexDefinitionManager, elasticsearchRestTemplate, restHighLevelClient));
         entryConsumerFactory.put(EventType.ERASE, new EraseConsumer(canalElasticsearchConfiguration,
-                indexDefinitionManager, elasticsearchRestTemplate));
+                indexDefinitionManager, elasticsearchRestTemplate, restHighLevelClient));
         CanalWorkConfiguration canalWorkConfiguration = new CanalWorkConfiguration();
         canalWorkConfiguration.setCanalConfiguration(canalConfiguration);
         canalWorkConfiguration.setConsumerConfigFactory(consumerConfigFactory);

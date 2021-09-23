@@ -1,5 +1,6 @@
 package com.fanxuankai.canal.elasticsearch.consumer;
 
+import cn.hutool.core.util.ArrayUtil;
 import com.alibaba.fastjson.JSON;
 import com.fanxuankai.canal.core.model.EntryWrapper;
 import com.fanxuankai.canal.core.util.CommonUtils;
@@ -7,17 +8,17 @@ import com.fanxuankai.canal.core.util.DomainConverter;
 import com.fanxuankai.canal.elasticsearch.*;
 import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration;
 import org.apache.commons.collections.CollectionUtils;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.document.Document;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 
 import java.io.IOException;
@@ -32,42 +33,48 @@ import java.util.stream.Collectors;
  *
  * @author fanxuankai
  */
-public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
+public class UpdateConsumer extends AbstractEsConsumer<List<QueryData>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateConsumer.class);
 
     public UpdateConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                           IndexDefinitionManager indexDefinitionManager,
-                          ElasticsearchRestTemplate elasticsearchRestTemplate) {
-        super(canalElasticsearchConfiguration, indexDefinitionManager, elasticsearchRestTemplate);
+                          ElasticsearchRestTemplate elasticsearchRestTemplate,
+                          RestHighLevelClient restHighLevelClient) {
+        super(canalElasticsearchConfiguration, indexDefinitionManager, elasticsearchRestTemplate, restHighLevelClient);
     }
 
-    static void update(List<Object> objects, ElasticsearchRestTemplate template) {
-        if (CollectionUtils.isEmpty(objects)) {
+    static void update(List<QueryData> list, ElasticsearchRestTemplate template,
+                       RestHighLevelClient restHighLevelClient) {
+        if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        List<UpdateQuery> updateQueries = objects.stream()
-                .filter(o -> o instanceof UpdateQuery)
-                .map(o -> (UpdateQuery) o)
+        List<QueryData> updateQueryDataList = list.stream()
+                .filter(o -> o.getQuery() instanceof UpdateQuery)
                 .collect(Collectors.toList());
-        if (!updateQueries.isEmpty()) {
+        if (!updateQueryDataList.isEmpty()) {
             try {
-                template.bulkUpdate(updateQueries);
+                String[] indexNames = ArrayUtil.toArray(updateQueryDataList.stream()
+                        .map(QueryData::getIndexName)
+                        .distinct()
+                        .collect(Collectors.toList()), String.class);
+                template.bulkUpdate(updateQueryDataList.stream()
+                        .map(o -> (UpdateQuery) o.getQuery())
+                        .collect(Collectors.toList()), IndexCoordinates.of(indexNames));
             } catch (Exception e) {
-                LOGGER.debug(e.getLocalizedMessage());
+                LOGGER.error(e.getLocalizedMessage());
             }
         }
-        objects.stream().filter(o -> o instanceof UpdateByQueryParam)
-                .map(o -> (UpdateByQueryParam) o)
-                .forEach(updateByQueryParam -> {
-                    RestHighLevelClient client = template.getClient();
+        list.stream().filter(o -> o.getQuery() instanceof UpdateByQuery)
+                .forEach(queryData -> {
+                    UpdateByQuery updateByQuery = (UpdateByQuery) queryData.getQuery();
                     //参数为索引名，可以不指定，可以一个，可以多个
                     UpdateByQueryRequest request =
-                            new UpdateByQueryRequest(updateByQueryParam.getIndexDefinition().getIndexName());
+                            new UpdateByQueryRequest(queryData.getIndexName());
                     // 更新时版本冲突
                     request.setConflicts("proceed");
                     // 设置查询条件，第一个参数是字段名，第二个参数是字段的值
-                    request.setQuery(updateByQueryParam.getUpdateByQuery().getQueryBuilder());
-                    String code = updateByQueryParam.getUpdateByQuery().getData()
+                    request.setQuery(updateByQuery.getQueryBuilder());
+                    String code = updateByQuery.getData()
                             .entrySet()
                             .stream()
                             .map(entry -> {
@@ -94,7 +101,7 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
                     // 刷新索引
                     request.setRefresh(true);
                     try {
-                        client.updateByQuery(request, RequestOptions.DEFAULT);
+                        restHighLevelClient.updateByQuery(request, RequestOptions.DEFAULT);
                     } catch (IOException e) {
                         LOGGER.error("update by query 异常", e);
                     }
@@ -102,7 +109,7 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
     }
 
     @Override
-    public List<Object> apply(EntryWrapper entryWrapper) {
+    public List<QueryData> apply(EntryWrapper entryWrapper) {
         return indexDefinitionManager.getIndexDefinitions(entryWrapper.getSchemaName(), entryWrapper.getTableName())
                 .stream()
                 .map(indexDefinition -> queries(entryWrapper, indexDefinition))
@@ -111,11 +118,11 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
     }
 
     @Override
-    public void accept(List<Object> objects) {
-        update(objects, elasticsearchRestTemplate);
+    public void accept(List<QueryData> list) {
+        update(list, elasticsearchRestTemplate, restHighLevelClient);
     }
 
-    private List<Object> queries(EntryWrapper entryWrapper, IndexDefinition indexDefinition) {
+    private List<QueryData> queries(EntryWrapper entryWrapper, IndexDefinition indexDefinition) {
         DocumentFunction<Object, Object> function = indexDefinition.getDocumentFunction();
         return entryWrapper.getAllRowDataList()
                 .stream()
@@ -129,8 +136,7 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
                     } else if (function instanceof OneToOneDocumentFunction) {
                         return ((OneToOneDocumentFunction<Object, Object>) function).applyForUpdate(before, after);
                     } else if (function instanceof OneToManyDocumentFunction) {
-                        return Collections.singletonList(new UpdateByQueryParam(indexDefinition,
-                                ((OneToManyDocumentFunction<Object, Object>) function).applyForUpdate(before, after)));
+                        return Collections.singletonList(((OneToManyDocumentFunction<Object, Object>) function).applyForUpdate(before, after));
                     } else if (function instanceof ManyToOneDocumentFunction) {
                         return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForUpdate(before, after));
                     } else if (function instanceof ManyToManyDocumentFunction) {
@@ -141,17 +147,19 @@ public class UpdateConsumer extends AbstractEsConsumer<List<Object>> {
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .map(o -> {
-                    if (o instanceof UpdateByQueryParam) {
-                        return o;
+                    QueryData queryData = new QueryData();
+                    queryData.setIndexName(indexDefinition.getIndexName());
+                    Object query;
+                    if (o instanceof UpdateByQuery) {
+                        query = o;
+                    } else {
+                        query = UpdateQuery.builder(getId(o))
+                                .withDocument(Document.parse(JSON.toJSONString(o)))
+                                .withDocAsUpsert(function instanceof MasterDocumentFunction)
+                                .build();
                     }
-                    UpdateQuery query = new UpdateQuery();
-                    query.setId(getId(o));
-                    query.setClazz(o.getClass());
-                    query.setUpdateRequest(new UpdateRequest()
-                            .doc(JSON.toJSONString(o), XContentType.JSON)
-                            .docAsUpsert(function instanceof MasterDocumentFunction)
-                    );
-                    return query;
+                    queryData.setQuery(query);
+                    return queryData;
                 })
                 .collect(Collectors.toList());
     }

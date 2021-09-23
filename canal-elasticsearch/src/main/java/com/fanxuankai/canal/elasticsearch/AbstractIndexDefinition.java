@@ -30,11 +30,6 @@ public abstract class AbstractIndexDefinition implements IndexDefinition {
         return document.indexName();
     }
 
-    @Override
-    public String getType() {
-        return document.type();
-    }
-
     @Nullable
     @Override
     public String getSchema() {

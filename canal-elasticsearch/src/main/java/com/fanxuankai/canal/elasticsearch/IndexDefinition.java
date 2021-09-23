@@ -17,13 +17,6 @@ public interface IndexDefinition {
     String getIndexName();
 
     /**
-     * 文档类型
-     *
-     * @return the doc type
-     */
-    String getType();
-
-    /**
      * 数据库名
      *
      * @return 为空时取全局数据库名

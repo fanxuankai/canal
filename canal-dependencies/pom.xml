@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fanxuankai.canal</groupId>
     <artifactId>canal-dependencies</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0_2.4.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Canal Dependencies</name>
     <description>Canal Dependencies</description>
@@ -31,8 +31,8 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <canal.client.version>1.1.4</canal.client.version>
-        <fanxuankai-commons.version>1.1.0-SNAPSHOT</fanxuankai-commons.version>
-        <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
+        <fanxuankai-commons.version>1.1.1_2.4.4-SNAPSHOT</fanxuankai-commons.version>
+        <spring-boot.version>2.4.4</spring-boot.version>
         <rocketmq-spring-boot.version>2.2.0</rocketmq-spring-boot.version>
         <aviator.version>4.2.10</aviator.version>
         <javassist.version>3.27.0-GA</javassist.version>

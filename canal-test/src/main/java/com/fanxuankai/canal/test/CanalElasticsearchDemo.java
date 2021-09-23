@@ -5,6 +5,7 @@ import com.fanxuankai.canal.core.config.CanalConfiguration;
 import com.fanxuankai.canal.elasticsearch.CanalElasticsearchWorker;
 import com.fanxuankai.canal.elasticsearch.IndexDefinitionManager;
 import com.fanxuankai.canal.test.domain.User;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
@@ -24,9 +25,9 @@ public class CanalElasticsearchDemo {
         canalConfiguration.setShowEventLog(true);
         canalConfiguration.setShowEntryLog(true);
         canalConfiguration.setBatchSize(10000);
+        RestHighLevelClient rest = RestClients.create(ClientConfiguration.localhost()).rest();
         CanalWorker canalWorker = CanalElasticsearchWorker.newCanalWorker(canalConfiguration,
-                null, indexDefinitionManager,
-                new ElasticsearchRestTemplate(RestClients.create(ClientConfiguration.localhost()).rest()));
+                null, indexDefinitionManager, new ElasticsearchRestTemplate(rest), rest);
         canalWorker.getCanalWorkConfiguration()
                 .setRedisTemplate(RedisTemplateUtils.newRedisTemplate());
         canalWorker.start();

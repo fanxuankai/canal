@@ -8,12 +8,16 @@ import com.fanxuankai.canal.core.util.DomainConverter;
 import com.fanxuankai.canal.elasticsearch.*;
 import com.fanxuankai.canal.elasticsearch.config.CanalElasticsearchConfiguration;
 import org.apache.commons.collections.CollectionUtils;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.document.Document;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -21,16 +25,17 @@ import java.util.stream.Collectors;
  *
  * @author fanxuankai
  */
-public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
+public class DeleteConsumer extends AbstractEsConsumer<List<QueryData>> {
 
     public DeleteConsumer(CanalElasticsearchConfiguration canalElasticsearchConfiguration,
                           IndexDefinitionManager indexDefinitionManager,
-                          ElasticsearchRestTemplate elasticsearchRestTemplate) {
-        super(canalElasticsearchConfiguration, indexDefinitionManager, elasticsearchRestTemplate);
+                          ElasticsearchRestTemplate elasticsearchRestTemplate,
+                          RestHighLevelClient restHighLevelClient) {
+        super(canalElasticsearchConfiguration, indexDefinitionManager, elasticsearchRestTemplate, restHighLevelClient);
     }
 
     @Override
-    public List<Object> apply(EntryWrapper entryWrapper) {
+    public List<QueryData> apply(EntryWrapper entryWrapper) {
         return indexDefinitionManager.getIndexDefinitions(entryWrapper.getSchemaName(), entryWrapper.getTableName())
                 .stream()
                 .map(indexDefinition -> queries(entryWrapper, indexDefinition))
@@ -44,18 +49,20 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
     }
 
     @Override
-    public void accept(List<Object> objects) {
-        if (CollectionUtils.isEmpty(objects)) {
+    public void accept(List<QueryData> list) {
+        if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        objects.stream().filter(o -> o instanceof DeleteObject)
-                .map(o -> (DeleteObject) o)
-                .forEach(deleteObject -> elasticsearchRestTemplate.delete(deleteObject.getDocClass(),
-                        deleteObject.getId()));
-        UpdateConsumer.update(objects, elasticsearchRestTemplate);
+        list.stream().filter(o -> o.getQuery() instanceof DeleteObject)
+                .forEach(queryData -> {
+                    DeleteObject deleteObject = (DeleteObject) queryData.getQuery();
+                    elasticsearchRestTemplate.delete(deleteObject.getId(),
+                            IndexCoordinates.of(queryData.getIndexName()));
+                });
+        UpdateConsumer.update(list, elasticsearchRestTemplate, restHighLevelClient);
     }
 
-    private List<Object> queries(EntryWrapper entryWrapper, IndexDefinition indexDefinition) {
+    private List<QueryData> queries(EntryWrapper entryWrapper, IndexDefinition indexDefinition) {
         DocumentFunction<Object, Object> function = indexDefinition.getDocumentFunction();
         return entryWrapper.getAllRowDataList()
                 .stream()
@@ -67,14 +74,11 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                         String id = ((MasterDocumentFunction<Object, Object>) function).applyForDelete(delete);
                         DeleteObject deleteObject = new DeleteObject();
                         deleteObject.setId(id);
-                        deleteObject.setDocClass(indexDefinition.getDocumentClass());
                         return Collections.singletonList(deleteObject);
                     } else if (function instanceof OneToOneDocumentFunction) {
                         return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForDelete(delete));
                     } else if (function instanceof OneToManyDocumentFunction) {
-                        return Optional.ofNullable(((OneToManyDocumentFunction<Object, Object>) function).applyForDelete(delete))
-                                .map(o -> Collections.singletonList(new UpdateByQueryParam(indexDefinition, o)))
-                                .orElse(Collections.emptyList());
+                        return Collections.singletonList(((OneToManyDocumentFunction<Object, Object>) function).applyForDelete(delete));
                     } else if (function instanceof ManyToOneDocumentFunction) {
                         return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForDelete(delete));
                     } else if (function instanceof ManyToManyDocumentFunction) {
@@ -84,31 +88,25 @@ public class DeleteConsumer extends AbstractEsConsumer<List<Object>> {
                 })
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
-                .map(object -> {
-                    if (function instanceof MasterDocumentFunction || object instanceof UpdateByQueryParam) {
-                        return object;
+                .map(o -> {
+                    QueryData queryData = new QueryData();
+                    queryData.setIndexName(indexDefinition.getIndexName());
+                    Object query;
+                    if (o instanceof DeleteObject || o instanceof UpdateByQuery) {
+                        query = o;
+                    } else {
+                        query = UpdateQuery.builder(getId(o))
+                                .withDocument(Document.parse(JSON.toJSONString(o)))
+                                .build();
                     }
-                    UpdateQuery query = new UpdateQuery();
-                    query.setClazz(object.getClass());
-                    query.setId(getId(object));
-                    query.setUpdateRequest(new UpdateRequest()
-                            .doc(JSON.toJSONString(object), XContentType.JSON));
-                    return query;
+                    queryData.setQuery(query);
+                    return queryData;
                 })
                 .collect(Collectors.toList());
     }
 
     private static final class DeleteObject {
-        private Class<?> docClass;
         private String id;
-
-        public Class<?> getDocClass() {
-            return docClass;
-        }
-
-        public void setDocClass(Class<?> docClass) {
-            this.docClass = docClass;
-        }
 
         public String getId() {
             return id;
