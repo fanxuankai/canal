@@ -3,8 +3,8 @@ package com.fanxuankai.canal.core;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.protocol.exception.CanalClientException;
 import com.fanxuankai.canal.core.config.CanalWorkConfiguration;
-import com.fanxuankai.commons.core.util.concurrent.Flow;
-import com.fanxuankai.commons.core.util.concurrent.SubmissionPublisher;
+import com.fanxuankai.commons.util.concurrent.Flow;
+import com.fanxuankai.commons.util.concurrent.SubmissionPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

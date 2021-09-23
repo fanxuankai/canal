@@ -76,8 +76,7 @@ public class InsertConsumer extends AbstractEsConsumer<List<QueryData>> {
                     } else if (function instanceof OneToOneDocumentFunction) {
                         return Collections.singletonList(((OneToOneDocumentFunction<Object, Object>) function).applyForInsert(insert));
                     } else if (function instanceof OneToManyDocumentFunction) {
-                        return Collections.singletonList(new UpdateByQueryParam(indexDefinition,
-                                ((OneToManyDocumentFunction<Object, Object>) function).applyForInsert(insert)));
+                        return Collections.singletonList(((OneToManyDocumentFunction<Object, Object>) function).applyForInsert(insert));
                     } else if (function instanceof ManyToOneDocumentFunction) {
                         return Collections.singletonList(((ManyToOneDocumentFunction<Object, Object>) function).applyForInsert(insert));
                     } else if (function instanceof ManyToManyDocumentFunction) {
